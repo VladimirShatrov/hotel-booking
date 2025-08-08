@@ -7,6 +7,9 @@
         <option value="$PROJECT_DIR$/config-server/pom.xml" />
         <option value="$PROJECT_DIR$/services/config-server/pom.xml" />
         <option value="$PROJECT_DIR$/discovery-service/pom.xml" />
+        <option value="$PROJECT_DIR$/services/discovery-service/pom.xml" />
+        <option value="$PROJECT_DIR$/places-service/pom.xml" />
+        <option value="$PROJECT_DIR$/services/places-service/pom.xml" />
       </list>
     </option>
   </component>
