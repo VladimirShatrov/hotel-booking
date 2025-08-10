@@ -1,0 +1,11 @@
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/portner-boop/kon-repo-proj
+  application:
+    name: config-server
+server:
+  port: 8002
+

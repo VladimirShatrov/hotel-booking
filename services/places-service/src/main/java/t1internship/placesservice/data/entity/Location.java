@@ -14,25 +14,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "location")
+@Table(name = "location", schema = "places_schema")
 @NamedEntityGraph(
         name = "Location.withFloors",
         attributeNodes = {
                 @NamedAttributeNode("floors")
-        }
-)
-@NamedEntityGraph(
-        name = "Location.withFloorsAndSpaces",
-        attributeNodes = {
-                @NamedAttributeNode(value = "floors", subgraph = "floorsWithSpaces")
-        },
-        subgraphs = {
-                @NamedSubgraph(
-                        name = "floorsWithSpaces",
-                        attributeNodes = {
-                                @NamedAttributeNode("spaces")
-                        }
-                )
         }
 )
 public class Location {

@@ -4,10 +4,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @NoArgsConstructor
-public class ChillSpaceResponse extends SpaceResponse {
+public class ChillSpaceResponse extends SpaceResponse  implements Serializable {
 
     private Integer numberOfSockets;
 

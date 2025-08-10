@@ -12,7 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "work_space")
+@Table(name = "work_space", schema = "places_schema")
 public class WorkSpace extends Space {
     private Boolean hasComputer;
     private Integer numberOfSockets;

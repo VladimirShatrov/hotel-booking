@@ -35,4 +35,25 @@ public class FloorMapper {
         response.setSpaces(spaceResponses);
         return response;
     }
+
+    public static FloorResponse toResponseWithoutSpaces(Floor floor) {
+        FloorResponse response = new FloorResponse();
+        response.setId(floor.getId());
+        response.setFloorNumber(floor.getFloorNumber());
+        response.setLocationId(floor.getLocation() != null ? floor.getLocation().getId() : null);
+        return response;
+    }
+
+    public static Floor updateEntity(FloorRequest request, Floor floor) {
+        floor.setFloorNumber(request.getFloorNumber());
+
+        var spaces = request.getSpaces().stream()
+                .map(SpaceMapper::toEntity)
+                .peek(space -> space.setFloor(floor))
+                .toList();
+        floor.getSpaces().clear();
+        floor.getSpaces().addAll(spaces);
+
+        return floor;
+    }
 }

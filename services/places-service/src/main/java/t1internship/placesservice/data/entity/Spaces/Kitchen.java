@@ -12,7 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "kitchen")
+@Table(name = "kitchen", schema = "places_schema")
 public class Kitchen extends Space {
 
     private Boolean hasCoffeeMachine;

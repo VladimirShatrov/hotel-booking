@@ -15,7 +15,7 @@ import t1internship.placesservice.data.entity.Floor;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "space")
+@Table(name = "space", schema = "places_schema")
 public abstract class Space {
 
     @Id

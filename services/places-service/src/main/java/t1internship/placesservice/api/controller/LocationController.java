@@ -18,15 +18,45 @@ public class LocationController {
 
     private final LocationService locationService;
 
-    @PostMapping
+    @PostMapping()
     private ResponseEntity<LocationResponse> createLocation(
             @Valid @RequestBody LocationRequest locationRequest){
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(locationService.createLocation(locationRequest));
     }
 
-    @GetMapping
-    private ResponseEntity<List<LocationResponse>> getAllLocationsWithFloorsAndSpaces(){
-        return ResponseEntity.ok(locationService.getAllLocationsWithFloorsAndSpaces());
+    @PostMapping("/many")
+    private ResponseEntity<List<LocationResponse>> createLocations(
+            @Valid @RequestBody List<LocationRequest> locationRequest){
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(locationService.createLocations(locationRequest));
     }
+
+    @GetMapping
+    private ResponseEntity<List<LocationResponse>> getAllLocationsWithFloorsAndSpaces(
+            @RequestParam(defaultValue = "false") boolean includeFloors,
+            @RequestParam(defaultValue = "false") boolean includeSpaces){
+        return ResponseEntity.ok(locationService.getLocations(includeFloors,includeSpaces));
+    }
+
+    @GetMapping("/{id}")
+    private ResponseEntity<LocationResponse> getLocationById(@PathVariable Long id){
+        return ResponseEntity.ok(locationService.getLocationById(id));
+    }
+
+    @DeleteMapping("/{id}")
+    private ResponseEntity<Void> deleteLocation(@PathVariable Long id){
+        locationService.deleteLocation(id);
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
+    }
+
+    @PatchMapping("/{id}")
+    private ResponseEntity<LocationResponse> updateLocation(
+            @PathVariable Long id,
+            @Valid @RequestBody LocationRequest locationRequest){
+        return ResponseEntity.ok(locationService.updateLocation(id,locationRequest));
+    }
+
 }

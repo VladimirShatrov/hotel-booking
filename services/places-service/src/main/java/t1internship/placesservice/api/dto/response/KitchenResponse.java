@@ -4,10 +4,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @NoArgsConstructor
-public class KitchenResponse extends SpaceResponse {
+public class KitchenResponse extends SpaceResponse   implements Serializable {
 
     private Boolean hasCoffeeMachine;
     private Boolean hasMicrowave;

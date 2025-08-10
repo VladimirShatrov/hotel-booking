@@ -28,7 +28,49 @@ public class LocationMapper {
         return location;
     }
 
+    public static LocationResponse toResponseWithoutSpaces(Location location) {
+        LocationResponse response = getLocationResponse(location);
+        List<FloorResponse> floorResponses = location.getFloors().stream()
+                .map(FloorMapper::toResponseWithoutSpaces)
+                .collect(Collectors.toList());
+        response.setFloors(floorResponses);
+        return response;
+    }
+
+    public static LocationResponse toResponseWithoutAll(Location location) {
+        LocationResponse response = getLocationResponse(location);
+        return response;
+    }
+
     public static LocationResponse toResponse(Location location) {
+        LocationResponse response = getLocationResponse(location);
+        List<FloorResponse> floorResponses = location.getFloors().stream()
+                .map(FloorMapper::toResponse)
+                .collect(Collectors.toList());
+        response.setFloors(floorResponses);
+        return response;
+    }
+
+
+    public static Location updateEntity(LocationRequest request, Location location) {
+        location.setName(request.getName());
+        location.setStreet(request.getStreet());
+        location.setBuildingNumber(request.getBuildingNumber());
+        location.setPostalCode(request.getPostalCode());
+        location.setPhoneNumber(request.getPhoneNumber());
+        location.setEmail(request.getEmail());
+        location.setCity(request.getCity());
+        var floors = request.getFloors().stream()
+                .map(floorRequest -> FloorMapper.updateEntity(floorRequest, new Floor()))
+                .peek(floor -> floor.setLocation(location))
+                .collect(Collectors.toList());
+        location.getFloors().clear();
+        location.getFloors().addAll(floors);
+        return location;
+    }
+
+
+    private static LocationResponse getLocationResponse(Location location) {
         LocationResponse response = new LocationResponse();
         response.setId(location.getId());
         response.setName(location.getName());
@@ -38,10 +80,6 @@ public class LocationMapper {
         response.setPhoneNumber(location.getPhoneNumber());
         response.setEmail(location.getEmail());
         response.setCity(location.getCity());
-        List<FloorResponse> floorResponses = location.getFloors().stream()
-                .map(FloorMapper::toResponse)
-                .collect(Collectors.toList());
-        response.setFloors(floorResponses);
         return response;
     }
 }

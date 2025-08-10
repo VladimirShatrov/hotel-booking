@@ -12,6 +12,6 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
     @EntityGraph(value = "Location.withFloors", type = EntityGraph.EntityGraphType.LOAD)
     List<Location> findAll();
 
-    @EntityGraph(value = "Location.withFloorsAndSpaces", type = EntityGraph.EntityGraphType.LOAD)
+    @EntityGraph(value = "Location.withFloors", type = EntityGraph.EntityGraphType.LOAD)
     Optional<Location> findById(Long id);
 }

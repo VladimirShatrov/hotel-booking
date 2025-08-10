@@ -12,7 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "chill_space")
+@Table(name = "chill_space", schema = "places_schema")
 public class ChillSpace extends Space {
 
     private Integer numberOfSockets;

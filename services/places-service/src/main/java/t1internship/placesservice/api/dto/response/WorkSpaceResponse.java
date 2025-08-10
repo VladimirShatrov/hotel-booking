@@ -4,10 +4,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @NoArgsConstructor
-public class WorkSpaceResponse extends SpaceResponse {
+public class WorkSpaceResponse extends SpaceResponse  implements Serializable {
 
     private Boolean hasComputer;
     private Integer numberOfSockets;
