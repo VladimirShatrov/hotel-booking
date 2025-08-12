@@ -1,0 +1,36 @@
+server:
+  port: 8006
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create
+  data:
+    redis:
+      host: ${TOKEN_CACHE_REDIS_HOST:localhost}
+      port: ${TOKEN_CACHE_REDIS_PORT:6379}
+
+  datasource:
+    url: jdbc:postgresql://${ACCOUNT_DB_HOST:localhost}:${ACCOUNT_DB_PORT:5434}/${ACCOUNT_DB:accounts}
+    username: ${ACCOUNT_DB_USER:user}
+    password: ${ACCOUNT_DB_PASSWORD:password}
+  kafka:
+    bootstrap-servers: ${KAFKA_HOST:localhost}:${KAFKA_PORT:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+eureka:
+  instance:
+    lease-renewal-interval-in-seconds: 30
+    hostname: localhost
+    appname: auth-service
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8002/eureka/
+    healthcheck:
+      enabled: true
+jwt:
+  expiration:
+    access: 600000
+    refresh: 3600000

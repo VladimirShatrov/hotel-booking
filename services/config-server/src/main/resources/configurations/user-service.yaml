@@ -14,18 +14,21 @@ server:
   port: 8003
 
 spring:
+  jpa:
+    hibernate:
+      ddl-auto: create
   datasource:
-    url: jdbc:postgresql://${DB_URL}:${DB_PORT}/${DB_NAME}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:postgresql://${PROFILE_DB_HOST:localhost}:${PROFILE_DB_PORT:5433}/${PROFILE_DB:profiles}
+    username: ${PROFILE_DB_USER:user}
+    password: ${PROFILE_DB_PASSWORD:password}
   kafka:
-    bootstrap-servers: ${KAFKA_SERVER}:${KAFKA_PORT}
+    bootstrap-servers: ${KAFKA_HOST:localhost}:${KAFKA_PORT:9092}
     consumer:
-      group-id: ${KAFKA_GROUP_ID}
+      group-id: user-service-group
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring:
           json:
             trusted:
-              packages: t1intership.authservice.dto
+              packages: t1internship.authservice.dto

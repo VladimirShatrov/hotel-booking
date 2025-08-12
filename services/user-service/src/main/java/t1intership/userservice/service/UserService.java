@@ -61,6 +61,7 @@ public class UserService implements UserInPort {
     @Transactional
     public UserData save(UserData data) {
         User user = mapper.dtoToEntity(data);
-        return mapper.entityToDto(userRepository.save(user));
+        this.userRepository.save(user);
+        return data;
     }
 }

@@ -1,6 +1,7 @@
 package t1intership.userservice.mapper;
 
 import org.mapstruct.Mapper;
+import t1internship.authservice.dto.UserKafkaData;
 import t1intership.userservice.domain.User;
 import t1intership.userservice.dto.UpdateProfileRequest;
 import t1intership.userservice.dto.UserData;

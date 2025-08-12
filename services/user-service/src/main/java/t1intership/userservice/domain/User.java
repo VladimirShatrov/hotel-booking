@@ -12,10 +12,10 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
+@Table(name = "users")
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(name = "first_name")
