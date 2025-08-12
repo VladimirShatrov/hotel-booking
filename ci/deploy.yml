@@ -5,12 +5,12 @@
     - apk add --no-cache openssh-client docker-cli sshpass
   script:
     - |
-      sshpass -p "$SSH_PASSWORD" ssh -tt -o StrictHostKeyChecking=no ${SSH_SERVER} <<'ENDSSH'
-      docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-      docker stop $SERVICE_NAME || true
-      docker rm $SERVICE_NAME || true
-      docker pull $CI_REGISTRY_IMAGE/$SERVICE_NAME:$CI_COMMIT_SHORT_SHA
-      docker run -d --name $SERVICE_NAME -p $SERVICE_PORT:$SERVICE_PORT $CI_REGISTRY_IMAGE/$SERVICE_NAME:$CI_COMMIT_SHORT_SHA
+      sshpass -p "${SSH_PASSWORD}" ssh -o StrictHostKeyChecking=no ${SSH_SERVER} <<'ENDSSH'
+      docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+      docker stop ${SERVICE_NAME} || true
+      docker rm ${SERVICE_NAME} || true
+      docker pull ${CI_REGISTRY_IMAGE}/${SERVICE_NAME}:${CI_COMMIT_SHORT_SHA}
+      docker run -d --name ${SERVICE_NAME} -p ${SERVICE_PORT}:${SERVICE_PORT} ${CI_REGISTRY_IMAGE}/${SERVICE_NAME}:${CI_COMMIT_SHORT_SHA}
       exit 0
       ENDSSH
 
