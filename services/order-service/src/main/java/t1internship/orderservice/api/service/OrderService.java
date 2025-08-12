@@ -8,6 +8,7 @@ import t1internship.orderservice.api.dto.response.BookingResponse;
 @Service
 public class OrderService {
     public BookingResponse createOrder(@Valid BookingRequest bookingRequest) {
+        return null;
     }
 
     public BookingResponse getOrderById(Long id) {
