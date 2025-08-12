@@ -12,10 +12,10 @@
         docker run -d --name ${SERVICE_NAME} -p ${SERVICE_PORT}:${SERVICE_PORT} $CI_REGISTRY/${SERVICE_NAME}:${CI_COMMIT_SHORT_SHA}
       "
 
-dockerdeploy-config-service:
+dockerdeploy-config-server:
   extends: .docker-deploy
   variables:
-    SERVICE_NAME: "config-service"
+    SERVICE_NAME: "config-server"
     SERVICE_PORT: 8888
 
 dockerdeploy-discovery-service:
