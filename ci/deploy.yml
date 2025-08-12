@@ -5,7 +5,7 @@
     - apk add --no-cache openssh-client docker-cli sshpass
   script:
     - |
-      sshpass -p "${SSH_PASSWORD}" ssh -o StrictHostKeyChecking=no ${SSH_SERVER} <<'EOF'
+      sshpass -p "${SSH_PASSWORD}" ssh -tt -o StrictHostKeyChecking=no ${SSH_SERVER} <<'EOF'
       docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
       docker stop ${SERVICE_NAME} || true
       docker rm ${SERVICE_NAME} || true
