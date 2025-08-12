@@ -1,0 +1,35 @@
+.docker-build:
+  stage: dockerize
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+    - cd ${SERVICE_NAME}
+  script:
+    - docker build -t ${CI_REGISTRY_IMAGE}/${SERVICE_NAME}:${CI_COMMIT_SHORT_SHA} .
+    - docker push ${CI_REGISTRY_IMAGE}/${SERVICE_NAME}:${CI_COMMIT_SHORT_SHA}
+
+dockerbuild-config-service:
+  extends: .docker-build
+  variables:
+    SERVICE_NAME: "config-service"
+    SERVICE_PATH: ../services/config-service
+
+dockerbuild-discovery-service:
+  extends: .docker-build
+  variables:
+    SERVICE_NAME: "discovery-service"
+    SERVICE_PATH: ../services/discovery-service
+
+dockerbuild-order-service:
+  extends: .docker-build
+  variables:
+    SERVICE_NAME: "order-service"
+    SERVICE_PATH: ../services/order-service
+
+dockerbuild-places-service:
+  extends: .docker-build
+  variables:
+    SERVICE_NAME: "places-service"
+    SERVICE_PATH: ../services/places-service
