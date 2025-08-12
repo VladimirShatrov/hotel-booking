@@ -12,26 +12,26 @@
         docker run -d --name ${SERVICE_NAME} -p ${SERVICE_PORT}:${SERVICE_PORT} $CI_REGISTRY/${SERVICE_NAME}:${CI_COMMIT_SHORT_SHA}
       "
 
-dockerbuild-config-service:
-  extends: .docker-build
+dockerdeploy-config-service:
+  extends: .docker-deploy
   variables:
     SERVICE_NAME: "config-service"
     SERVICE_PORT: 8888
 
-dockerbuild-discovery-service:
-  extends: .docker-build
+dockerdeploy-discovery-service:
+  extends: .docker-deploy
   variables:
     SERVICE_NAME: "discovery-service"
     SERVICE_PORT: 8761
 
-dockerbuild-order-service:
-  extends: .docker-build
+dockerdeploy-order-service:
+  extends: .docker-deploy
   variables:
     SERVICE_NAME: "order-service"
     SERVICE_PORT: 8887
 
-dockerbuild-places-service:
-  extends: .docker-build
+dockerdeploy-places-service:
+  extends: .docker-deploy
   variables:
     SERVICE_NAME: "places-service"
     SERVICE_PORT: 8080
