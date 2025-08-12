@@ -7,5 +7,5 @@ spring:
   application:
     name: config-server
 server:
-  port: 8002
+  port: 8888
 
