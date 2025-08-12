@@ -7,6 +7,7 @@
     - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
   script:
     - cd ${CI_PROJECT_DIR}
+    - echo pwd
     - docker build -t ${CI_REGISTRY_IMAGE}/${SERVICE_NAME}:${CI_COMMIT_SHORT_SHA} -f ${SERVICE_PATH}/Dockerfile ${SERVICE_PATH}
     - docker push ${CI_REGISTRY_IMAGE}/${SERVICE_NAME}:${CI_COMMIT_SHORT_SHA}
 
