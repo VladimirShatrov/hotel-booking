@@ -56,6 +56,7 @@ dockerdeploy-config-server:
 
 dockerdeploy-discovery-service:
   extends: .docker-deploy
+  needs: ["dockerdeploy-config-server"]
   variables:
     SERVICE_NAME: "discovery-service"
     SERVICE_PORT: 8761
@@ -73,6 +74,7 @@ dockerdeploy-discovery-service:
 
 dockerdeploy-places-service:
   extends: .docker-deploy
+  needs: ["dockerdeploy-discovery-server"]
   variables:
     SERVICE_NAME: "places-service"
     SERVICE_PORT: 8082
