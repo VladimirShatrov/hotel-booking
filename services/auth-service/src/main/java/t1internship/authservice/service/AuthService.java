@@ -6,6 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import t1internship.authservice.adapter.out.kafka.UserKafkaProducer;
@@ -34,6 +35,7 @@ public class AuthService implements AuthInPort {
     private final RoleRepository roleRepository;
     private final UserMapper userMapper;
     private final UserKafkaProducer userKafkaProducer;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public AuthResponse login(SignInRequest request) {
@@ -73,6 +75,7 @@ public class AuthService implements AuthInPort {
 
         final User user = this.userMapper.signUpRequestToUser(request);
         user.setRoles(roles);
+        user.setPassword(passwordEncoder.encode(request.password()));
         User sendUser = this.userRepository.save(user);
         this.userKafkaProducer.sendUser(userMapper.entityToKafkaData(sendUser));
     }

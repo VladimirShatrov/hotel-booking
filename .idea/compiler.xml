@@ -8,6 +8,8 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="config-server" />
+        <module name="shared" />
+        <module name="security-configuration-starter" />
         <module name="discovery-service" />
       </profile>
       <profile name="Annotation profile for user-service" enabled="true">
@@ -34,6 +36,8 @@
       <module name="config-server" options="-parameters" />
       <module name="discovery-service" options="-parameters" />
       <module name="jwt_assymetric" options="-parameters" />
+      <module name="security-configuration-starter" options="-parameters" />
+      <module name="shared" options="" />
       <module name="user-service" options="-parameters -Amapstruct.defaultComponentModel=spring" />
     </option>
   </component>

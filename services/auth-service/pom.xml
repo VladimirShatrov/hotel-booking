@@ -23,6 +23,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>T1-internship</groupId>
+            <artifactId>common-dtos</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
             <version>0.12.6</version>

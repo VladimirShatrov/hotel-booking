@@ -35,6 +35,17 @@
     <dependencies>
 
         <dependency>
+            <groupId>T1-internship</groupId>
+            <artifactId>jwt-security-starter</artifactId>
+            <version>1.0.7</version>
+        </dependency>
+        <dependency>
+            <groupId>T1-internship</groupId>
+            <artifactId>common-dtos</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.5.0</version>
@@ -86,12 +97,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>T1-internship</groupId>
-            <artifactId>auth-service</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
     <dependencyManagement>

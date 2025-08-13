@@ -1,4 +1,4 @@
-package t1internship.authservice.dto;
+package t1internship.shared.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

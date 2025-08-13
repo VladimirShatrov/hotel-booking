@@ -3,7 +3,7 @@ server:
 spring:
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
   data:
     redis:
       host: ${TOKEN_CACHE_REDIS_HOST:localhost}
@@ -34,3 +34,6 @@ jwt:
   expiration:
     access: 600000
     refresh: 3600000
+logging:
+  level:
+    org.springframework.security: DEBUG

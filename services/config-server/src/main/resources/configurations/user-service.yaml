@@ -16,7 +16,7 @@ server:
 spring:
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
   datasource:
     url: jdbc:postgresql://${PROFILE_DB_HOST:localhost}:${PROFILE_DB_PORT:5433}/${PROFILE_DB:profiles}
     username: ${PROFILE_DB_USER:user}
@@ -31,4 +31,17 @@ spring:
         spring:
           json:
             trusted:
-              packages: t1internship.authservice.dto
+              packages: t1internship.shared.dto
+app:
+  security:
+    jwt:
+      jwkSetUri: http://localhost:8006/.well-known/jwks.json
+      publicUrls:
+        - "/v3/api-docs/**"
+        - "/actuator/**"
+        - "/swagger-ui/**"
+        - "/swagger-ui.html"
+        - "/swagger-resources/**"
+        - "/webjars/**"
+        - "/favicon.ico"
+        - "/error"

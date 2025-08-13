@@ -4,7 +4,7 @@ import org.mapstruct.Mapper;
 import t1internship.authservice.domain.User;
 import t1internship.authservice.dto.SignUpRequest;
 import t1internship.authservice.dto.UserData;
-import t1internship.authservice.dto.UserKafkaData;
+import t1internship.shared.dto.UserKafkaData;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {

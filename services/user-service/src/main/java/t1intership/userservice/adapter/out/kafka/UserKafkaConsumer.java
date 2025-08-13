@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
-import t1internship.authservice.dto.UserKafkaData;
+import t1internship.shared.dto.UserKafkaData;
 import t1intership.userservice.dto.UserData;
 import t1intership.userservice.port.in.UserInPort;
 

@@ -3,7 +3,7 @@ package t1internship.authservice.adapter.out.kafka;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
-import t1internship.authservice.dto.UserKafkaData;
+import t1internship.shared.dto.UserKafkaData;
 
 @Component
 @RequiredArgsConstructor

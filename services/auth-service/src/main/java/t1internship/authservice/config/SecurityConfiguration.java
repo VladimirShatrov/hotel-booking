@@ -3,6 +3,7 @@ package t1internship.authservice.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -27,14 +28,17 @@ public class SecurityConfiguration {
             "/configuration/security",
             "/swagger-ui/**",
             "/webjars/**",
-            "/swagger-ui.html"
+            "/swagger-ui.html",
+            "/.well-known/jwks.json"
     };
 
     private final JwtAuthFilter jwtAuthFilter;
 
     @Bean
+    @Order(1)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
+                .securityMatcher("/api/v1/auth/**")
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PUBLIC_URLS).permitAll()
