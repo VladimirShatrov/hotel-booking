@@ -1,0 +1,47 @@
+eureka:
+  instance:
+    lease-renewal-interval-in-seconds: 30
+    hostname: localhost
+    appname: user-service
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8002/eureka/
+    healthcheck:
+      enabled: true
+server:
+  port: 8003
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:postgresql://${PROFILE_DB_HOST:localhost}:${PROFILE_DB_PORT:5433}/${PROFILE_DB:profiles}
+    username: ${PROFILE_DB_USER:user}
+    password: ${PROFILE_DB_PASSWORD:password}
+  kafka:
+    bootstrap-servers: ${KAFKA_HOST:localhost}:${KAFKA_PORT:9092}
+    consumer:
+      group-id: user-service-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: t1internship.shared.dto
+app:
+  security:
+    jwt:
+      jwkSetUri: http://localhost:8006/.well-known/jwks.json
+      publicUrls:
+        - "/v3/api-docs/**"
+        - "/actuator/**"
+        - "/swagger-ui/**"
+        - "/swagger-ui.html"
+        - "/swagger-resources/**"
+        - "/webjars/**"
+        - "/favicon.ico"
+        - "/error"
