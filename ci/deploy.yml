@@ -5,14 +5,25 @@
     - apk add --no-cache openssh-client docker-cli sshpass
   script:
     - |
-      sshpass -p "${SSH_PASSWORD}" ssh -o StrictHostKeyChecking=no ${SSH_SERVER} <<'ENDSSH'
+      sshpass -p "${SSH_PASSWORD}" ssh -tt -o StrictHostKeyChecking=no ${SSH_SERVER} /bin/sh <<EOF
+      set -ex
+      
       sudo docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
-      sudo docker stop ${SERVICE_NAME} || true
-      sudo docker rm ${SERVICE_NAME} || true
-      sudo docker pull ${CI_REGISTRY_IMAGE}/${SERVICE_NAME}:${CI_COMMIT_SHORT_SHA}
-      sudo docker run -d --name ${SERVICE_NAME} -p ${SERVICE_PORT}:${SERVICE_PORT} ${CI_REGISTRY_IMAGE}/${SERVICE_NAME}:${CI_COMMIT_SHORT_SHA}
+      
+      if docker inspect "${SERVICE_NAME}" >/dev/null 2>&1; then
+        docker stop "${SERVICE_NAME}"
+        docker rm "${SERVICE_NAME}"
+      fi
+      
+      docker pull "${CI_REGISTRY_IMAGE}/${SERVICE_NAME}:${CI_COMMIT_SHORT_SHA}"
+      docker run -d \
+        --name "${SERVICE_NAME}" \
+        -p "${SERVICE_PORT}:${SERVICE_PORT}" \
+        "${CI_REGISTRY_IMAGE}/${SERVICE_NAME}:${CI_COMMIT_SHORT_SHA}"
+      
+      docker ps -a | grep "${SERVICE_NAME}"
       exit 0
-      ENDSSH
+      EOF
 
 dockerdeploy-config-server:
   extends: .docker-deploy
