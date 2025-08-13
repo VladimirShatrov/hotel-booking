@@ -1,0 +1,39 @@
+.docker-build:
+  stage: dockerize
+  image: docker:latest
+  variables:
+    CI_REGISTRY_USER: "gitlab-ci-token"
+    CI_REGISTRY_PASSWORD: "$CI_JOB_TOKEN"
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+  script:
+    - cd ${CI_PROJECT_DIR}
+    - pwd
+    - docker build -t ${CI_REGISTRY_IMAGE}/${SERVICE_NAME}:${CI_COMMIT_SHORT_SHA} -f ${SERVICE_PATH}/Dockerfile ${SERVICE_PATH}
+    - docker push ${CI_REGISTRY_IMAGE}/${SERVICE_NAME}:${CI_COMMIT_SHORT_SHA}
+
+dockerbuild-config-server:
+  extends: .docker-build
+  variables:
+    SERVICE_NAME: "config-server"
+    SERVICE_PATH: services/config-server
+
+dockerbuild-discovery-service:
+  extends: .docker-build
+  variables:
+    SERVICE_NAME: "discovery-service"
+    SERVICE_PATH: services/discovery-service
+
+#dockerbuild-order-service:
+#  extends: .docker-build
+#  variables:
+#    SERVICE_NAME: "order-service"
+#    SERVICE_PATH: services/order-service
+
+dockerbuild-places-service:
+  extends: .docker-build
+  variables:
+    SERVICE_NAME: "places-service"
+    SERVICE_PATH: services/places-service
