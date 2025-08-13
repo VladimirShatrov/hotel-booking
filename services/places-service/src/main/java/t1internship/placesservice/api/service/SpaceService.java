@@ -82,4 +82,9 @@ public class SpaceService {
     public void deleteSpace(Long id) {
         spaceRepository.deleteById(id);
     }
+
+    @Transactional
+    public Boolean checkExistenceOfSpace(Long id) {
+        return spaceRepository.existsById(id);
+    }
 }

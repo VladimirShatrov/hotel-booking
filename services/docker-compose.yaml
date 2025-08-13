@@ -35,6 +35,7 @@ services:
       dockerfile: Dockerfile
     image: t1-internship/config-service:0.0.1-SNAPSHOT
     container_name: config-service
+    network_mode: host
     ports:
       - "8888:8888"
     environment:
@@ -47,6 +48,7 @@ services:
       context: ./discovery-service
       dockerfile: Dockerfile
     container_name: discovery-service
+    network_mode: host
     depends_on:
       - config-service
     ports:

@@ -1,5 +1,6 @@
 package t1internship.orderservice.api.dto.request;
 
+import lombok.Builder;
 import lombok.Data;
 
 import jakarta.validation.constraints.FutureOrPresent;
@@ -8,7 +9,8 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
-public class BookingRequest {
+@Builder
+public class OrderRequest {
     @NotNull(message = "userId is required")
     private Long userId;
 
@@ -19,8 +21,9 @@ public class BookingRequest {
     private Long floorId;
 
     @NotNull(message = "startTime is required")
-    @FutureOrPresent(message = "startTime must be now or in the future")
     private LocalDateTime startTime;
+
+    private String timeZone;
 
     @NotNull(message = "durationHours is required")
     @Min(value = 1, message = "durationHours must be at least 1")
