@@ -14,10 +14,14 @@
       export CI_REGISTRY_PASSWORD="${CI_REGISTRY_PASSWORD}"
       export CI_REGISTRY="${CI_REGISTRY}"
       export CI_REGISTRY_IMAGE="${CI_REGISTRY_IMAGE}"
-      export SERVICE_NAME="${SERVICE_NAME}"
-      export SERVICE_PORT="${SERVICE_PORT}"
       export CI_COMMIT_SHORT_SHA="${CI_COMMIT_SHORT_SHA}"
       
+      export SERVICE_NAME="${SERVICE_NAME}"
+      export SERVICE_PORT="${SERVICE_PORT}"
+
+      export SPRING_PROFILES_ACTIVE=git
+      export SPRING_CLOUD_CONFIG_SERVER_GIT_URI=https://github.com/portner-boop/kon-repo-proj
+
       set -ex
       
       env | grep CI_
@@ -32,6 +36,8 @@
       sudo docker run -d \
         --name "\${SERVICE_NAME}" \
         -p "\${SERVICE_PORT}:\${SERVICE_PORT}" \
+        -e SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE} \
+        -e SPRING_CLOUD_CONFIG_SERVER_GIT_URI=${SPRING_CLOUD_CONFIG_SERVER_GIT_URI} \
         "\${CI_REGISTRY_IMAGE}/\${SERVICE_NAME}:\${CI_COMMIT_SHORT_SHA}"
       
       sudo docker ps -a | grep "\${SERVICE_NAME}"
@@ -54,10 +60,10 @@ dockerdeploy-order-service:
   extends: .docker-deploy
   variables:
     SERVICE_NAME: "order-service"
-    SERVICE_PORT: 8887
+    SERVICE_PORT: 8081
 
 dockerdeploy-places-service:
   extends: .docker-deploy
   variables:
     SERVICE_NAME: "places-service"
-    SERVICE_PORT: 8080
+    SERVICE_PORT: 8082
