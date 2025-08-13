@@ -8,14 +8,23 @@
       echo "Registry: ${CI_REGISTRY}"
       echo "Image: ${CI_REGISTRY_IMAGE}/${SERVICE_NAME}:${CI_COMMIT_SHORT_SHA}"
 
-      sshpass -p "${SSH_PASSWORD}" ssh -tt -o StrictHostKeyChecking=no ${SSH_SERVER} /bin/sh <<'EOF'
+      sshpass -p "${SSH_PASSWORD}" ssh -tt -o StrictHostKeyChecking=no ${SSH_SERVER} /bin/sh <<'END_SSH'
+      
+      export CI_REGISTRY_USER="${CI_REGISTRY_USER}"
+      export CI_REGISTRY_PASSWORD="${CI_REGISTRY_PASSWORD}"
+      export CI_REGISTRY="${CI_REGISTRY}"
+      export CI_REGISTRY_IMAGE="${CI_REGISTRY_IMAGE}"
+      export SERVICE_NAME="${SERVICE_NAME}"
+      export SERVICE_PORT="${SERVICE_PORT}"
+      export CI_COMMIT_SHORT_SHA="${CI_COMMIT_SHORT_SHA}"
+      
       set -ex
       
       sudo docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
       
       if sudo docker inspect "${SERVICE_NAME}" >/dev/null 2>&1; then
-        sudo docker stop "${SERVICE_NAME}"
-        sudo docker rm "${SERVICE_NAME}"
+        sudo docker stop "${SERVICE_NAME}" || true
+        sudo docker rm "${SERVICE_NAME}" || true
       fi
       
       sudo docker pull "${CI_REGISTRY_IMAGE}/${SERVICE_NAME}:${CI_COMMIT_SHORT_SHA}"
@@ -26,7 +35,7 @@
       
       sudo docker ps -a | grep "${SERVICE_NAME}"
       exit 0
-      EOF
+      END_SSH
 
 dockerdeploy-config-server:
   extends: .docker-deploy
