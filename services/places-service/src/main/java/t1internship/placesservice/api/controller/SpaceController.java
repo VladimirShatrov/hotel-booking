@@ -53,4 +53,11 @@ public class SpaceController {
         spaceService.deleteSpace(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
+    @GetMapping("/{id}/exists")
+    public ResponseEntity<Void> checkSpaceExistence(@PathVariable Long id) {
+        return spaceService.checkExistenceOfSpace(id)
+                ? ResponseEntity.ok().build()
+                : ResponseEntity.notFound().build();
+    }
 }

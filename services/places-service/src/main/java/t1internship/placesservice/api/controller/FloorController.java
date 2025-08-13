@@ -20,7 +20,7 @@ public class FloorController {
     private final FloorService floorService;
 
     @GetMapping("/{id}")
-    private ResponseEntity<List<FloorResponse>> getFloorsByLocationId(
+    public ResponseEntity<List<FloorResponse>> getFloorsByLocationId(
             @PathVariable Long id,
             @RequestParam(defaultValue = "false") Boolean includeSpaces) {
         return ResponseEntity
@@ -28,7 +28,7 @@ public class FloorController {
     }
 
     @PostMapping("/{id}")
-    private ResponseEntity<FloorResponse> createFloorInLocationById(
+    public ResponseEntity<FloorResponse> createFloorInLocationById(
             @PathVariable Long id,
             @RequestBody FloorRequest floorRequest){
         return ResponseEntity
@@ -37,7 +37,7 @@ public class FloorController {
     }
 
     @PostMapping("/many/{id}")
-    private ResponseEntity<List<FloorResponse>> createFloorsInLocationById(
+    public ResponseEntity<List<FloorResponse>> createFloorsInLocationById(
             @PathVariable Long id,
             @Valid @RequestBody List<FloorRequest> floorRequests) {
         return ResponseEntity
@@ -47,7 +47,7 @@ public class FloorController {
     }
 
     @DeleteMapping("/{id}")
-    private ResponseEntity<Void> deleteFloor(@PathVariable Long id){
+    public ResponseEntity<Void> deleteFloor(@PathVariable Long id){
         floorService.deleteFloor(id);
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
@@ -55,7 +55,7 @@ public class FloorController {
     }
 
     @PatchMapping("/{id}")
-    private ResponseEntity<FloorResponse> updateFloor(
+    public ResponseEntity<FloorResponse> updateFloor(
             @PathVariable Long id,
             @Valid @RequestBody FloorRequest floorRequest){
         return ResponseEntity.ok(floorService.updateFloor(id,floorRequest));

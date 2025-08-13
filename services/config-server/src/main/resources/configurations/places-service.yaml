@@ -25,3 +25,5 @@ flyway:
   locations: classpath:db/migration
   schemas: places_schema
   baseline-on-migrate: true
+server:
+  port: 8000
