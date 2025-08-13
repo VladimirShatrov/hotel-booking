@@ -74,7 +74,7 @@ dockerdeploy-discovery-service:
 
 dockerdeploy-places-service:
   extends: .docker-deploy
-  needs: ["dockerdeploy-discovery-server"]
+  needs: ["dockerdeploy-discovery-service"]
   variables:
     SERVICE_NAME: "places-service"
     SERVICE_PORT: 8082
