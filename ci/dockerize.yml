@@ -23,11 +23,11 @@ dockerbuild-discovery-service:
     SERVICE_NAME: "discovery-service"
     SERVICE_PATH: services/discovery-service
 
-dockerbuild-order-service:
-  extends: .docker-build
-  variables:
-    SERVICE_NAME: "order-service"
-    SERVICE_PATH: services/order-service
+#dockerbuild-order-service:
+#  extends: .docker-build
+#  variables:
+#    SERVICE_NAME: "order-service"
+#    SERVICE_PATH: services/order-service
 
 dockerbuild-places-service:
   extends: .docker-build
