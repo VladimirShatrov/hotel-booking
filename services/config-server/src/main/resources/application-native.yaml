@@ -6,7 +6,5 @@ spring:
       server:
         native:
           search-locations: classpath:/configurations
-  profiles:
-    active: native
 server:
   port: 8001

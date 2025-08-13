@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: places-service
+  config:
+    import: optional:configserver:http://localhost:8001
