@@ -2,51 +2,86 @@
   stage: deploy
   image: alpine:3.18
   before_script:
-    - apk add --no-cache openssh-client docker-cli sshpass
+    - apk add --no-cache openssh-client docker-cli sshpass curl jq
+  variables:
+    CI_REGISTRY_USER: "gitlab-ci-token"
+    CI_REGISTRY_PASSWORD: "$CI_JOB_TOKEN"
   script:
     - |
       echo "Registry: ${CI_REGISTRY}"
       echo "Image: ${CI_REGISTRY_IMAGE}/${SERVICE_NAME}:${CI_COMMIT_SHORT_SHA}"
 
-      sshpass -p "${SSH_PASSWORD}" ssh -tt -o StrictHostKeyChecking=no ${SSH_SERVER} /bin/sh <<END_SSH
-      
+      sshpass -p "${SSH_PASSWORD}" ssh \
+        -o StrictHostKeyChecking=no \
+        -o LogLevel=ERROR \
+        ${SSH_SERVER} /bin/sh <<END_SSH
+      set -ex
+
       export CI_REGISTRY_USER="${CI_REGISTRY_USER}"
       export CI_REGISTRY_PASSWORD="${CI_REGISTRY_PASSWORD}"
       export CI_REGISTRY="${CI_REGISTRY}"
       export CI_REGISTRY_IMAGE="${CI_REGISTRY_IMAGE}"
       export CI_COMMIT_SHORT_SHA="${CI_COMMIT_SHORT_SHA}"
-
       export SERVICE_NAME="${SERVICE_NAME}"
       export SERVICE_PORT="${SERVICE_PORT}"
+      export ENV_VARS="${ENV_VARS}"
 
-      set -ex
-      
-      env | grep CI_
-      sudo docker login -u "\${CI_REGISTRY_USER}" -p "\${CI_REGISTRY_PASSWORD}" "\${CI_REGISTRY}"
-
-      if sudo docker inspect "\${SERVICE_NAME}" >/dev/null 2>&1; then
-        sudo docker stop "\${SERVICE_NAME}" || true
-        sudo docker rm "\${SERVICE_NAME}" || true
+      echo "Authenticating to registry..."
+      if ! echo "${CI_REGISTRY_PASSWORD}" | sudo docker login -u "${CI_REGISTRY_USER}" --password-stdin "${CI_REGISTRY}"; then
+        echo "ERROR: Docker login failed"
+        exit 1
       fi
 
       if ! sudo docker network inspect app-network >/dev/null 2>&1; then
-        sudo docker network create app-network
+        echo "Creating network..."
+        sudo docker network create app-network || {
+          echo "ERROR: Failed to create network"
+          exit 1
+        }
       fi
 
-      sudo docker pull "\${CI_REGISTRY_IMAGE}/\${SERVICE_NAME}:\${CI_COMMIT_SHORT_SHA}"
+      echo "Pulling image..."
+      if ! sudo docker pull "${CI_REGISTRY_IMAGE}/${SERVICE_NAME}:${CI_COMMIT_SHORT_SHA}"; then
+        echo "ERROR: Failed to pull image"
+        exit 1
+      fi
+
+      sudo docker pull "${CI_REGISTRY_IMAGE}/${SERVICE_NAME}:${CI_COMMIT_SHORT_SHA}"
       sudo docker run -d \
-        --name "\${SERVICE_NAME}" \
+        --name "${SERVICE_NAME}" \
         --network app-network \
-        -p "\${SERVICE_PORT}:\${SERVICE_PORT}" \
+        -p "${SERVICE_PORT}:\${SERVICE_PORT}" \
         ${ENV_VARS} \
-        "\${CI_REGISTRY_IMAGE}/\${SERVICE_NAME}:\${CI_COMMIT_SHORT_SHA}"
+        "${CI_REGISTRY_IMAGE}/${SERVICE_NAME}:${CI_COMMIT_SHORT_SHA}"
       
-      sudo docker ps -a | grep "\${SERVICE_NAME}"
+      sudo docker ps -a | grep "${SERVICE_NAME}"
+      exit 0
+      END_SSH
+
+clean-docker:
+  stage: deploy
+  image: alpine:3.18
+  before_script:
+    - apk add --no-cache openssh-client docker-cli sshpass curl jq
+  script:
+    - |
+      sshpass -p "${SSH_PASSWORD}" ssh \
+        -o StrictHostKeyChecking=no \
+        -o LogLevel=ERROR \
+        ${SSH_SERVER} /bin/sh <<END_SSH
+      set -ex
+
+      sudo docker stop \$(sudo docker ps -aq) || true
+      sudo docker rm \$(sudo docker ps -aq) || true
+
+      sudo docker rmi -f \$(sudo docker images -q) || true
+
       exit 0
       END_SSH
 
 dockerdeploy-config-server:
   extends: .docker-deploy
+  needs: ["clean-docker"]
   variables:
     SERVICE_NAME: "config-server"
     SERVICE_PORT: 8888
@@ -61,6 +96,7 @@ dockerdeploy-discovery-service:
     SERVICE_NAME: "discovery-service"
     SERVICE_PORT: 8761
     ENV_VARS: >-
+      -e SPRING_PROFILES_ACTIVE=prod
       -e EUREKA_HOSTNAME=discovery-service
       -e SERVER_PORT=8761
       -e SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
@@ -68,9 +104,15 @@ dockerdeploy-discovery-service:
 
 #dockerdeploy-order-service:
 #  extends: .docker-deploy
+#  needs: ["dockerdeploy-discovery-service"]
 #  variables:
 #    SERVICE_NAME: "order-service"
 #    SERVICE_PORT: 8081
+#    ENV_VARS: >-
+#      -e SPRING_PROFILES_ACTIVE=docker
+#      -e EUREKA_HOST=discovery-service
+#      -e EUREKA_PORT=8761
+#      -e SERVER_PORT=8081
 
 dockerdeploy-places-service:
   extends: .docker-deploy
@@ -79,11 +121,7 @@ dockerdeploy-places-service:
     SERVICE_NAME: "places-service"
     SERVICE_PORT: 8082
     ENV_VARS: >-
-      -e SPRING_PROFILES_ACTIVE=docker
+      -e SPRING_PROFILES_ACTIVE=prod
       -e EUREKA_HOST=discovery-service
       -e EUREKA_PORT=8761
       -e SERVER_PORT=8082
-      -e SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/${DB_NAME}
-      -e SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
-      -e SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
-      -e SPRING_REDIS_HOST=redis
