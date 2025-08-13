@@ -8,7 +8,7 @@
       echo "Registry: ${CI_REGISTRY}"
       echo "Image: ${CI_REGISTRY_IMAGE}/${SERVICE_NAME}:${CI_COMMIT_SHORT_SHA}"
 
-      sshpass -p "${SSH_PASSWORD}" ssh -tt -o StrictHostKeyChecking=no ${SSH_SERVER} /bin/sh <<'END_SSH'
+      sshpass -p "${SSH_PASSWORD}" ssh -tt -o StrictHostKeyChecking=no ${SSH_SERVER} /bin/sh <<END_SSH
       
       export CI_REGISTRY_USER="${CI_REGISTRY_USER}"
       export CI_REGISTRY_PASSWORD="${CI_REGISTRY_PASSWORD}"
@@ -21,21 +21,20 @@
       set -ex
       
       env | grep CI_
-      sudo docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
-      echo "Connection to docker done"
+      sudo docker login -u "\${CI_REGISTRY_USER}" -p "\${CI_REGISTRY_PASSWORD}" "\${CI_REGISTRY}"
 
-      if sudo docker inspect "${SERVICE_NAME}" >/dev/null 2>&1; then
-        sudo docker stop "${SERVICE_NAME}" || true
-        sudo docker rm "${SERVICE_NAME}" || true
+      if sudo docker inspect "\${SERVICE_NAME}" >/dev/null 2>&1; then
+        sudo docker stop "\${SERVICE_NAME}" || true
+        sudo docker rm "\${SERVICE_NAME}" || true
       fi
       
-      sudo docker pull "${CI_REGISTRY_IMAGE}/${SERVICE_NAME}:${CI_COMMIT_SHORT_SHA}"
+      sudo docker pull "\${CI_REGISTRY_IMAGE}/\${SERVICE_NAME}:\${CI_COMMIT_SHORT_SHA}"
       sudo docker run -d \
-        --name "${SERVICE_NAME}" \
-        -p "${SERVICE_PORT}:${SERVICE_PORT}" \
-        "${CI_REGISTRY_IMAGE}/${SERVICE_NAME}:${CI_COMMIT_SHORT_SHA}"
+        --name "\${SERVICE_NAME}" \
+        -p "\${SERVICE_PORT}:\${SERVICE_PORT}" \
+        "\${CI_REGISTRY_IMAGE}/\${SERVICE_NAME}:\${CI_COMMIT_SHORT_SHA}"
       
-      sudo docker ps -a | grep "${SERVICE_NAME}"
+      sudo docker ps -a | grep "\${SERVICE_NAME}"
       exit 0
       END_SSH
 
