@@ -28,10 +28,15 @@
         sudo docker stop "\${SERVICE_NAME}" || true
         sudo docker rm "\${SERVICE_NAME}" || true
       fi
-      
+
+      if ! sudo docker network inspect app-network >/dev/null 2>&1; then
+        sudo docker network create app-network
+      fi
+
       sudo docker pull "\${CI_REGISTRY_IMAGE}/\${SERVICE_NAME}:\${CI_COMMIT_SHORT_SHA}"
       sudo docker run -d \
         --name "\${SERVICE_NAME}" \
+        --network app-network \
         -p "\${SERVICE_PORT}:\${SERVICE_PORT}" \
         "\${CI_REGISTRY_IMAGE}/\${SERVICE_NAME}:\${CI_COMMIT_SHORT_SHA}"
       
@@ -44,12 +49,20 @@ dockerdeploy-config-server:
   variables:
     SERVICE_NAME: "config-server"
     SERVICE_PORT: 8888
+    ENV_VARS: >-
+      -e SPRING_PROFILES_ACTIVE=git
+      -e SPRING_CLOUD_CONFIG_SERVER_GIT_URI=https://github.com/portner-boop/kon-repo-proj
 
 dockerdeploy-discovery-service:
   extends: .docker-deploy
   variables:
     SERVICE_NAME: "discovery-service"
     SERVICE_PORT: 8761
+    ENV_VARS: >-
+      -e EUREKA_HOSTNAME=discovery-service
+      -e SERVER_PORT=8761
+      -e SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      -e SPRING_CLOUD_CONFIG_URI=http://config-server:8888
 
 #dockerdeploy-order-service:
 #  extends: .docker-deploy
@@ -62,3 +75,12 @@ dockerdeploy-places-service:
   variables:
     SERVICE_NAME: "places-service"
     SERVICE_PORT: 8082
+    ENV_VARS: >-
+      -e SPRING_PROFILES_ACTIVE=docker
+      -e EUREKA_HOST=discovery-service
+      -e EUREKA_PORT=8761
+      -e SERVER_PORT=8082
+      -e SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/${DB_NAME}
+      -e SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
+      -e SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+      -e SPRING_REDIS_HOST=redis
