@@ -64,11 +64,11 @@ public class AuthService implements AuthInPort {
         final Role userRole;
         if (request.email() != null && request.email().contains("admin")) {
             userRole = this.roleRepository.findByName("ROLE_ADMIN")
-                    .orElseThrow(() -> new EntityNotFoundException("1"));
+                    .orElseThrow(() -> new EntityNotFoundException("не удалось найти роль: ROLE_ADMIN"));
         }
         else {
             userRole = this.roleRepository.findByName("ROLE_GUEST")
-                    .orElseThrow(() -> new EntityNotFoundException("2"));
+                    .orElseThrow(() -> new EntityNotFoundException("не удалось найти роль: ROLE_GUEST"));
         }
         final List<Role> roles = new ArrayList<>();
         roles.add(userRole);

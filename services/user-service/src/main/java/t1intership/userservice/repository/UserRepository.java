@@ -6,4 +6,6 @@ import t1intership.userservice.domain.User;
 import java.util.UUID;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
+
+    boolean existsById(UUID id);
 }

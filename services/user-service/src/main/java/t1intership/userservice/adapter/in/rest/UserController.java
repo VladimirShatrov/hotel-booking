@@ -48,4 +48,13 @@ public class UserController {
                 .body(user);
     }
 
+    @GetMapping("/{userId}/extsts")
+    public ResponseEntity<Void> exists(
+            @PathVariable UUID userId
+    ) {
+        return userService.existsById(userId)
+                ? ResponseEntity.ok().build()
+                : ResponseEntity.notFound().build();
+    }
+
 }

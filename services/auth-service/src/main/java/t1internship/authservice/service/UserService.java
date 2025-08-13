@@ -1,5 +1,6 @@
 package t1internship.authservice.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,14 +26,14 @@ public class UserService implements UserInPort {
     @Override
     public void changePassword(ChangePasswordRequest request, UUID userId) {
         if (!request.newPassword().equals(request.newPasswordConfirm())) {
-            throw new RuntimeException("");
+            throw new RuntimeException("Пароли не совпадают: " + request.newPassword() + ", " + request.newPasswordConfirm());
         }
 
         final User savedUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UsernameNotFoundException(""));
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь с id: " + userId + " не найден"));
 
         if (!this.passwordEncoder.matches(request.oldPassword(), savedUser.getPassword())) {
-            throw new RuntimeException("");
+            throw new RuntimeException("неверный пароль");
         }
 
         final String encodedPassword = passwordEncoder.encode(request.newPassword());
@@ -43,10 +44,10 @@ public class UserService implements UserInPort {
     @Override
     public void deactivateAccount(UUID userId) {
         final User savedUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UsernameNotFoundException(""));
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь с id: " + userId + " не найден"));
 
         if (!savedUser.isEnabled()) {
-            throw new RuntimeException("");
+            throw new RuntimeException("Пользователь недоступен");
         }
         savedUser.setEnabled(false);
         this.userRepository.save(savedUser);
@@ -55,10 +56,10 @@ public class UserService implements UserInPort {
     @Override
     public void reactivateAccount(UUID userId) {
         final User savedUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UsernameNotFoundException(""));
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь с id: " + userId + " не найден"));
 
-        if (savedUser.isEnabled()){
-            throw new RuntimeException("");
+        if (!savedUser.isEnabled()) {
+            throw new RuntimeException("Пользователь недоступен");
         }
         savedUser.setEnabled(true);
         this.userRepository.save(savedUser);

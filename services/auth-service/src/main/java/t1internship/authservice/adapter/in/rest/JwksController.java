@@ -32,7 +32,7 @@ public class JwksController {
                     )
             );
         } catch (Exception e) {
-            throw new RuntimeException("Failed to generate JWKS", e);
+            throw new RuntimeException("Ошибка при генерации JWKS", e);
         }
     }
 }

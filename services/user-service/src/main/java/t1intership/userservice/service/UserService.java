@@ -64,4 +64,9 @@ public class UserService implements UserInPort {
         this.userRepository.save(user);
         return data;
     }
+
+    @Override
+    public boolean existsById(UUID id) {
+        return userRepository.existsById(id);
+    }
 }

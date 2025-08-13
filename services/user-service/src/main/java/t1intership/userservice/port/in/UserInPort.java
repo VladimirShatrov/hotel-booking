@@ -12,4 +12,6 @@ public interface UserInPort {
     UserData updateProfile(UUID id, UpdateProfileRequest data);
 
     UserData save(UserData data);
+
+    boolean existsById(UUID id);
 }

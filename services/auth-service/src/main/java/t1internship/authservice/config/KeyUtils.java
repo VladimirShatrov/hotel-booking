@@ -34,7 +34,7 @@ public class KeyUtils {
     private static String readKeyFromResource(String pemPath) throws Exception {
         try (final InputStream is = KeyUtils.class.getClassLoader().getResourceAsStream(pemPath)) {
             if (is == null) {
-                throw new IllegalArgumentException("file not found: " + pemPath);
+                throw new IllegalArgumentException("файл не найден: " + pemPath);
             }
             return new String(is.readAllBytes());
         }

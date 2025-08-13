@@ -6,4 +6,8 @@ import java.util.List;
 
 public interface DepartmentInPort {
     List<DepartmentData> getAllDepartment();
+
+    DepartmentData save(String name);
+
+    DepartmentData getById(Long id);
 }
