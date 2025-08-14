@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import t1internship.authservice.domain.User;
 import t1internship.authservice.dto.ChangePasswordRequest;
+import t1internship.authservice.dto.UserData;
 import t1internship.authservice.mapper.UserMapper;
 import t1internship.authservice.port.in.UserInPort;
 import t1internship.authservice.port.out.UserRepository;
@@ -22,6 +23,7 @@ public class UserService implements UserInPort {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserMapper mapper;
 
     @Override
     public void changePassword(ChangePasswordRequest request, UUID userId) {
@@ -63,5 +65,11 @@ public class UserService implements UserInPort {
         }
         savedUser.setEnabled(true);
         this.userRepository.save(savedUser);
+    }
+
+    @Override
+    public UserData findUserByEmail(String email) {
+        return mapper.entityToDto(userRepository.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь с email: " + email + " не найден")));
     }
 }
