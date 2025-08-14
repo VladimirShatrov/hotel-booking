@@ -3,7 +3,7 @@ package t1internship.orderservice.api.service;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -34,9 +34,12 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final RestTemplate restTemplate;
 
+    @Value("${places-service.base-url}")
+    private String placesServiceBaseUrl;
+
     @Transactional
     public OrderResponse createOrder(OrderRequest orderRequest) {
-        String url = "http://localhost:8000/api/v1/spaces/" + orderRequest.getSpaceId() + "/exists";
+        String url = placesServiceBaseUrl + orderRequest.getSpaceId() + "/exists";
         try {
             ResponseEntity<Void> response = restTemplate.getForEntity(url, Void.class);
             if (!response.getStatusCode().is2xxSuccessful()) {

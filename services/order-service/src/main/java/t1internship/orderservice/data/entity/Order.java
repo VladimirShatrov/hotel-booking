@@ -41,7 +41,8 @@ public class Order {
     private OrderStatus status;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now() ;
+    @CreatedDate
+    private LocalDateTime createdAt ;
 
     @Column
     @LastModifiedDate
