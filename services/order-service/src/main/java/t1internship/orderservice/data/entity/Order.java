@@ -7,6 +7,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 
 @Setter
@@ -22,7 +23,7 @@ public class Order {
     private Long id;
 
     @Column(nullable = false)
-    private Long userId;
+    private UUID userId;
 
     @Column(nullable = false)
     private Long spaceId;
@@ -41,7 +42,8 @@ public class Order {
     private OrderStatus status;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now() ;
+    @CreatedDate
+    private LocalDateTime createdAt ;
 
     @Column
     @LastModifiedDate

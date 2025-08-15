@@ -7,12 +7,13 @@ import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @Builder
 public class OrderRequest {
     @NotNull(message = "userId is required")
-    private Long userId;
+    private UUID userId;
 
     @NotNull(message = "spaceId is required")
     private Long spaceId;
