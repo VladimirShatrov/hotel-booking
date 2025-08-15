@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
 public record UserKafkaData(
-
         @NotNull
         UUID id,
 
@@ -14,3 +13,4 @@ public record UserKafkaData(
         String email
 ) {
 }
+

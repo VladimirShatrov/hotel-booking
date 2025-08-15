@@ -17,4 +17,6 @@ public interface UserInPort{
 
     UserData findUserByEmail(String email);
 
+    void giveUserAdminRole(UUID userId);
+
 }

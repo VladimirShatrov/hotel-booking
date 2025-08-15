@@ -7,13 +7,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import t1internship.authservice.domain.Role;
 import t1internship.authservice.domain.User;
 import t1internship.authservice.dto.ChangePasswordRequest;
 import t1internship.authservice.dto.UserData;
 import t1internship.authservice.mapper.UserMapper;
 import t1internship.authservice.port.in.UserInPort;
+import t1internship.authservice.port.out.RoleRepository;
 import t1internship.authservice.port.out.UserRepository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -24,6 +27,8 @@ public class UserService implements UserInPort {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper mapper;
+
+    private final RoleRepository roleRepository;
 
     @Override
     public void changePassword(ChangePasswordRequest request, UUID userId) {
@@ -71,5 +76,21 @@ public class UserService implements UserInPort {
     public UserData findUserByEmail(String email) {
         return mapper.entityToDto(userRepository.findByEmailIgnoreCase(email)
                 .orElseThrow(() -> new EntityNotFoundException("Пользователь с email: " + email + " не найден")));
+    }
+
+    @Override
+    public void giveUserAdminRole(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь с id: " + userId + " не найден"));
+
+        List<Role> userRoles = user.getRoles();
+        if (userRoles.stream().anyMatch(r -> r.getName().equals("ROLE_ADMIN"))) {
+            throw new RuntimeException("У пользователя: " + userId + " уже есть роль ADMIN");
+        }
+
+        userRoles.add(roleRepository.findByName("ADMIN_ROLE")
+                .orElseThrow(() -> new EntityNotFoundException("Роль ROLE_ADMIN не найдена")));
+        user.setRoles(userRoles);
+        userRepository.save(user);
     }
 }
