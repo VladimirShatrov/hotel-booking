@@ -1,6 +1,6 @@
 CREATE TABLE order_schema.bookings (
 id BIGSERIAL PRIMARY KEY,
-user_id BIGINT NOT NULL,
+user_id UUID NOT NULL,
 space_id BIGINT NOT NULL,
 floor_id BIGINT NOT NULL,
 start_time TIMESTAMP NOT NULL,

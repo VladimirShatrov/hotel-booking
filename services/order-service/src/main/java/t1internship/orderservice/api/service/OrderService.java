@@ -21,10 +21,10 @@ import t1internship.orderservice.data.repository.OrderRepository;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,13 +37,21 @@ public class OrderService {
     @Value("${places-service.base-url}")
     private String placesServiceBaseUrl;
 
+    @Value("${user-service.base-url}")
+    private String userServiceBaseUrl;
+
     @Transactional
     public OrderResponse createOrder(OrderRequest orderRequest) {
-        String url = placesServiceBaseUrl + orderRequest.getSpaceId() + "/exists";
+        String url1 = placesServiceBaseUrl + orderRequest.getSpaceId() + "/exists";
+        String url2 = userServiceBaseUrl + orderRequest.getUserId() + "/exists";
         try {
-            ResponseEntity<Void> response = restTemplate.getForEntity(url, Void.class);
-            if (!response.getStatusCode().is2xxSuccessful()) {
+            ResponseEntity<Void> response1 = restTemplate.getForEntity(url1, Void.class);
+            ResponseEntity<Void> response2 = restTemplate.getForEntity(url2, Void.class);
+            if (!response1.getStatusCode().is2xxSuccessful()) {
                 throw new IllegalArgumentException("Space with id " + orderRequest.getSpaceId() + " does not exist");
+            }
+            if (!response2.getStatusCode().is2xxSuccessful()) {
+                throw new IllegalArgumentException("User with id " + orderRequest.getUserId() + " does not exist");
             }
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
@@ -72,18 +80,20 @@ public class OrderService {
     @Transactional
     @Scheduled(fixedRate = 60000)
     public void updateExpiredOrders() {
-        List<Order> expiredOrders = orderRepository.findConfirmedOrdersWithExpiredEndTime(LocalDateTime.now());
+        List<Order> expiredOrders = orderRepository.findConfirmedOrdersWithExpiredEndTime(LocalDateTime.now(ZoneOffset.UTC));
          expiredOrders.forEach(order ->
                      order.setStatus(OrderStatus.COMPLETED));
         orderRepository.saveAll(expiredOrders);
     }
 
+    @Transactional
     public OrderResponse getOrderById(Long id) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
         return OrderMapper.toResponse(order);
     }
 
+    @Transactional
     public OrderResponse updateOrderById(Long id, @Valid UpdateBookingRequest updateRequest) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
@@ -92,12 +102,14 @@ public class OrderService {
         return OrderMapper.toResponse(updatedOrder);
     }
 
+    @Transactional
     public void deleteOrderById(Long id) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
         orderRepository.delete(order);
     }
 
+    @Transactional
     public List<OrderResponse> getAllOrders(
             Boolean includeConfirmed,
             Boolean includeCanceled,
@@ -115,6 +127,7 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public List<OrderResponse> getOrdersByUserId(Long userId) {
         List<Order> orders = orderRepository
                 .findOrdersByUserId(userId);
