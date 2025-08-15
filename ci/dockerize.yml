@@ -7,33 +7,55 @@
   services:
     - docker:dind
   before_script:
-    - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+    - |
+      if ! echo "${CI_REGISTRY_PASSWORD}" | sudo docker login -u "${CI_REGISTRY_USER}" --password-stdin "${CI_REGISTRY}"; then
+        echo "ERROR: Docker login failed"
+        exit 1
+      fi
   script:
     - cd ${CI_PROJECT_DIR}
-    - pwd
-    - docker build -t ${CI_REGISTRY_IMAGE}/${SERVICE_NAME}:${CI_COMMIT_SHORT_SHA} -f ${SERVICE_PATH}/Dockerfile ${SERVICE_PATH}
+    - docker build -t ${CI_REGISTRY_IMAGE}/${SERVICE_NAME}:${CI_COMMIT_SHORT_SHA} -f ${DOCKERFILE_PATH} ${BUILD_CONTEXT_PATH}
     - docker push ${CI_REGISTRY_IMAGE}/${SERVICE_NAME}:${CI_COMMIT_SHORT_SHA}
 
 dockerbuild-config-server:
   extends: .docker-build
   variables:
     SERVICE_NAME: "config-server"
-    SERVICE_PATH: services/config-server
+    BUILD_CONTEXT_PATH: services/config-server
+    DOCKERFILE_PATH: services/config-server
 
 dockerbuild-discovery-service:
   extends: .docker-build
   variables:
     SERVICE_NAME: "discovery-service"
-    SERVICE_PATH: services/discovery-service
-
-#dockerbuild-order-service:
-#  extends: .docker-build
-#  variables:
-#    SERVICE_NAME: "order-service"
-#    SERVICE_PATH: services/order-service
+    BUILD_CONTEXT_PATH: services/discovery-service
+    DOCKERFILE_PATH: services/discovery-service
 
 dockerbuild-places-service:
   extends: .docker-build
   variables:
     SERVICE_NAME: "places-service"
-    SERVICE_PATH: services/places-service
+    BUILD_CONTEXT_PATH: services/places-service
+    DOCKERFILE_PATH: services/places-service
+
+dockerbuild-user-service:
+  extends: .docker-build
+  variables:
+    SERVICE_NAME: "user-service"
+    BUILD_CONTEXT_PATH: .
+    DOCKERFILE_PATH: services/user-service
+
+dockerbuild-auth-service:
+  extends: .docker-build
+  variables:
+    SERVICE_NAME: "auth-service"
+    BUILD_CONTEXT_PATH: .
+    DOCKERFILE_PATH: services/auth-service
+
+dockerbuild-order-service:
+  extends: .docker-build
+  variables:
+    SERVICE_NAME: "order-service"
+    BUILD_CONTEXT_PATH: services/order-service
+    DOCKERFILE_PATH: services/order-service
+  
