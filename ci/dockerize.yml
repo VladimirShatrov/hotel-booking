@@ -18,40 +18,40 @@ dockerbuild-config-server:
   variables:
     SERVICE_NAME: "config-server"
     BUILD_CONTEXT_PATH: services/config-server
-    DOCKERFILE_PATH: services/config-server
+    DOCKERFILE_PATH: services/config-server/Dockerfile
 
 dockerbuild-discovery-service:
   extends: .docker-build
   variables:
     SERVICE_NAME: "discovery-service"
     BUILD_CONTEXT_PATH: services/discovery-service
-    DOCKERFILE_PATH: services/discovery-service
+    DOCKERFILE_PATH: services/discovery-service/Dockerfile
 
 dockerbuild-places-service:
   extends: .docker-build
   variables:
     SERVICE_NAME: "places-service"
     BUILD_CONTEXT_PATH: services/places-service
-    DOCKERFILE_PATH: services/places-service
+    DOCKERFILE_PATH: services/places-service/Dockerfile
 
 dockerbuild-user-service:
   extends: .docker-build
   variables:
     SERVICE_NAME: "user-service"
     BUILD_CONTEXT_PATH: .
-    DOCKERFILE_PATH: services/user-service
+    DOCKERFILE_PATH: services/user-service/Dockerfile
 
 dockerbuild-auth-service:
   extends: .docker-build
   variables:
     SERVICE_NAME: "auth-service"
     BUILD_CONTEXT_PATH: .
-    DOCKERFILE_PATH: services/auth-service
+    DOCKERFILE_PATH: services/auth-service/Dockerfile
 
 dockerbuild-order-service:
   extends: .docker-build
   variables:
     SERVICE_NAME: "order-service"
     BUILD_CONTEXT_PATH: services/order-service
-    DOCKERFILE_PATH: services/order-service
+    DOCKERFILE_PATH: services/order-service/Dockerfile
   
