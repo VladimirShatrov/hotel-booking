@@ -140,7 +140,7 @@ dockerdeploy-user-service:
 
 dockerdeploy-order-service:
   extends: .docker-deploy
-  needs: ["dockerdeploy-auth-service"]
+  needs: ["dockerdeploy-user-service"]
   variables:
     SERVICE_NAME: "order-service"
     SERVICE_PORT: 8085
