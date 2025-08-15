@@ -26,4 +26,4 @@ flyway:
   schemas: places_schema
   baseline-on-migrate: true
 server:
-  port: 8000
+  port: 8082

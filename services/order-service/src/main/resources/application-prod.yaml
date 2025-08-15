@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: order-service
+  config:
+    import: optional:configserver:http://10.10.146.230:8888
+places-service:
+  base-url: http://10.10.146.230:8082/api/v1/spaces/
+user-service:
+  base-url: http://10.10.146.230:8082/api/v1/user/
