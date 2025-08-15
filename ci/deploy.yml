@@ -102,18 +102,6 @@ dockerdeploy-discovery-service:
       -e SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
       -e SPRING_CLOUD_CONFIG_URI=http://config-server:8888
 
-#dockerdeploy-order-service:
-#  extends: .docker-deploy
-#  needs: ["dockerdeploy-discovery-service"]
-#  variables:
-#    SERVICE_NAME: "order-service"
-#    SERVICE_PORT: 8081
-#    ENV_VARS: >-
-#      -e SPRING_PROFILES_ACTIVE=docker
-#      -e EUREKA_HOST=discovery-service
-#      -e EUREKA_PORT=8761
-#      -e SERVER_PORT=8081
-
 dockerdeploy-places-service:
   extends: .docker-deploy
   needs: ["dockerdeploy-discovery-service"]
@@ -125,3 +113,39 @@ dockerdeploy-places-service:
       -e EUREKA_HOST=discovery-service
       -e EUREKA_PORT=8761
       -e SERVER_PORT=8082
+
+dockerdeploy-auth-service:
+  extends: .docker-deploy
+  needs: ["dockerdeploy-discovery-service"]
+  variables:
+    SERVICE_NAME: "auth-service"
+    SERVICE_PORT: 8084
+    ENV_VARS: >-
+      -e SPRING_PROFILES_ACTIVE=prod
+      -e EUREKA_HOST=discovery-service
+      -e EUREKA_PORT=8761
+      -e SERVER_PORT=8084
+
+dockerdeploy-user-service:
+  extends: .docker-deploy
+  needs: ["dockerdeploy-auth-service"]
+  variables:
+    SERVICE_NAME: "user-service"
+    SERVICE_PORT: 8083
+    ENV_VARS: >-
+      -e SPRING_PROFILES_ACTIVE=prod
+      -e EUREKA_HOST=discovery-service
+      -e EUREKA_PORT=8761
+      -e SERVER_PORT=8083
+
+dockerdeploy-order-service:
+  extends: .docker-deploy
+  needs: ["dockerdeploy-auth-service"]
+  variables:
+    SERVICE_NAME: "order-service"
+    SERVICE_PORT: 8085
+    ENV_VARS: >-
+      -e SPRING_PROFILES_ACTIVE=prod
+      -e EUREKA_HOST=discovery-service
+      -e EUREKA_PORT=8761
+      -e SERVER_PORT=8085
