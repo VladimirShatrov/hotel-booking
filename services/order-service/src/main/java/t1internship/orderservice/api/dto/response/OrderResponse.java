@@ -7,13 +7,14 @@ import lombok.Data;
 import t1internship.orderservice.data.entity.OrderStatus;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @Builder
 @AllArgsConstructor
 public class OrderResponse {
     private Long id;
-    private Long userId;
+    private UUID userId;
     private Long spaceId;
     private Long floorId;
     private LocalDateTime startTime;

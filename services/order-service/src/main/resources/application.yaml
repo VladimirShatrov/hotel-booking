@@ -3,5 +3,7 @@ spring:
     name: order-service
   config:
     import: optional:configserver:http://localhost:8888
-
-
+places-service:
+  base-url: http://localhost:8082/api/v1/spaces/
+user-service:
+  base-url: http://localhost:8082/api/v1/user/
