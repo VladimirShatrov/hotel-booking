@@ -25,6 +25,7 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -128,7 +129,7 @@ public class OrderService {
     }
 
     @Transactional
-    public List<OrderResponse> getOrdersByUserId(Long userId) {
+    public List<OrderResponse> getOrdersByUserId(UUID userId) {
         List<Order> orders = orderRepository
                 .findOrdersByUserId(userId);
         return orders.stream()
