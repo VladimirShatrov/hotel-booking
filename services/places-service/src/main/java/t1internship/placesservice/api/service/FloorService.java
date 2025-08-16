@@ -87,4 +87,9 @@ public class FloorService {
                 .map(FloorMapper::toResponse)
                 .toList();
     }
+
+    @Transactional
+    public boolean checkExistenceOfSpace(Long id) {
+        return floorRepository.existsById(id);
+    }
 }
