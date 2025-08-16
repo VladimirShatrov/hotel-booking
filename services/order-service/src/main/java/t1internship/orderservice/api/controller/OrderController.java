@@ -11,6 +11,7 @@ import t1internship.orderservice.api.dto.request.OrderRequest;
 import t1internship.orderservice.api.service.OrderService;
 
 import java.util.List;
+import java.util.UUID;
 
 
 @RestController
@@ -31,7 +32,7 @@ public class OrderController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<OrderResponse>> getOrdersByUserId(@PathVariable Long userId) {
+    public ResponseEntity<List<OrderResponse>> getOrdersByUserId(@PathVariable UUID userId) {
         return ResponseEntity.ok(orderService.getOrdersByUserId(userId));
     }
 
