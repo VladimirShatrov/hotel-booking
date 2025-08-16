@@ -1,0 +1,11 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: user-service-route
+          uri: http://10.10.146.230:8003
+          predicates:
+            - Host=user.api.t1.internship
+server:
+  port: 8010
+  forward-headers-strategy: framework
