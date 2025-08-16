@@ -23,4 +23,3 @@ CREATE TABLE account_schema.users_roles (
                                      CONSTRAINT fk_role_id FOREIGN KEY (roles_id) REFERENCES account_schema.roles(id),
                                      CONSTRAINT fk_user_id FOREIGN KEY (users_id) REFERENCES account_schema.users(id)
 );
-
