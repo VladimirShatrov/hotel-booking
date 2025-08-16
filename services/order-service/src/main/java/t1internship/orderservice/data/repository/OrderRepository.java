@@ -10,6 +10,7 @@ import t1internship.orderservice.data.entity.OrderStatus;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order,Long> {
@@ -27,7 +28,7 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
     @Query("SELECT o FROM Order o WHERE o.status = 'CONFIRMED' AND o.endTime < :currentTime")
     List<Order> findConfirmedOrdersWithExpiredEndTime(@Param("currentTime") LocalDateTime currentTime);
 
-    List<Order> findOrdersByUserId(Long userId);
+    List<Order> findOrdersByUserId(UUID userId);
 
     List<Order> findByStatusIn(List<String> statuses);
 }
