@@ -124,7 +124,7 @@ dockerdeploy-auth-service:
       -e SPRING_PROFILES_ACTIVE=prod
       -e EUREKA_HOST=discovery-service
       -e EUREKA_PORT=8761
-      -e SERVER_PORT=8084
+      -e SERVER_PORT=8006
 
 dockerdeploy-user-service:
   extends: .docker-deploy
