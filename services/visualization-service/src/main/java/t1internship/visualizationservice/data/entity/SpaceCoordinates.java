@@ -23,6 +23,6 @@ public class SpaceCoordinates {
     private int y;
 
     @ManyToOne
-    @JoinColumn(name = "floor_image_id" )
-    private FloorVisualization floorvisualization;
+    @JoinColumn(name = "floor_image_id")
+    private FloorVisualization floorVisualization;
 }

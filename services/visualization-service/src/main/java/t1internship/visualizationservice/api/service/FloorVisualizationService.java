@@ -36,14 +36,14 @@ public class FloorVisualizationService {
 
     @Transactional
     public String uploadFloor(Long floorId, MultipartFile file, List<SpaceDto> spacesDtoList ) throws IOException, ServerException, InsufficientDataException, ErrorResponseException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
-        if(!placesServiceClient.checkFloorExists(floorId)){
-            throw new NotFoundFloorException("Not found floor with id: "+ floorId);
-        }
-        for (SpaceDto space : spacesDtoList) {
-            if (!placesServiceClient.checkPlaceExists(space.getPlaceId())) {
-                throw new NotFoundSpaceException("Not found space with id: "+ space.getPlaceId());
-            }
-        }
+//        if(!placesServiceClient.checkFloorExists(floorId)){
+//            throw new NotFoundFloorException("Not found floor with id: "+ floorId);
+//        }
+//        for (SpaceDto space : spacesDtoList) {
+//            if (!placesServiceClient.checkPlaceExists(space.getPlaceId())) {
+//                throw new NotFoundSpaceException("Not found space with id: "+ space.getPlaceId());
+//            }
+//        }
         String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
         minioClient.putObject(
                 PutObjectArgs.builder()

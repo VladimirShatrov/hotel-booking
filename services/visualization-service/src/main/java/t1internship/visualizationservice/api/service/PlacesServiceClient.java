@@ -5,7 +5,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
+import javax.naming.ServiceUnavailableException;
 
 @Service
 public class PlacesServiceClient {
@@ -21,33 +24,34 @@ public class PlacesServiceClient {
 
     public boolean checkFloorExists(Long floorId) {
         try {
-            ResponseEntity<Boolean> response = restTemplate.getForEntity(
-                    baseUrl + "/floors/{floorId}/exists", Boolean.class, floorId);
-            if (response.getStatusCode() == HttpStatus.OK) {
-                return Boolean.TRUE.equals(response.getBody());
-            }
-            return false;
-        } catch (HttpClientErrorException e) {
-            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
-                return false;
-            }
-            throw e;
+            return checkExistence("floors/{id}/exists", floorId);
+        } catch (ServiceUnavailableException e) {
+            throw new RuntimeException(e);
         }
     }
 
     public boolean checkPlaceExists(Long placeId) {
         try {
-            ResponseEntity<Boolean> response = restTemplate.getForEntity(
-                    baseUrl + "/places/{placeId}/exists", Boolean.class, placeId);
-            if (response.getStatusCode() == HttpStatus.OK) {
-                return Boolean.TRUE.equals(response.getBody());
-            }
+            return checkExistence("places/{id}/exists", placeId);
+        } catch (ServiceUnavailableException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private boolean checkExistence(String endpoint, Long id) throws ServiceUnavailableException {
+        try {
+            ResponseEntity<Void> response = restTemplate.getForEntity(
+                    baseUrl + endpoint,
+                    Void.class,
+                    id
+            );
+            return response.getStatusCode() == HttpStatus.OK;
+        } catch (HttpClientErrorException.NotFound e) {
             return false;
-        } catch (HttpClientErrorException e) {
-            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
-                return false;
-            }
-            throw e;
+        } catch (RestClientException e) {
+            throw new ServiceUnavailableException(
+                    "Failed to check existence. Service unavailable: " + e.getMessage()
+            );
         }
     }
 }

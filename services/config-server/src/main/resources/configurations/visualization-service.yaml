@@ -1,8 +1,8 @@
 spring:
   servlet:
     multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
+      max-file-size: 100MB
+      max-request-size: 100MB
   datasource:
     url: jdbc:postgresql://localhost:5432/places?schema=visualization_schema
     username: user
@@ -10,7 +10,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: true
+      ddl-auto: create
     database: postgresql
     show-sql: true
     properties:

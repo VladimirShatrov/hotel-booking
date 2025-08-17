@@ -4,4 +4,10 @@ spring:
   config:
     import: optional:configserver:http://localhost:8888
 places-service:
-  base-url: http://localhost:8082/api/v1/locations
+  base-url: http://localhost:8082/api/v1/
+minio:
+  url: http://localhost:9000
+  access-key: minioadmin
+  secret-key: minioadmin123
+  bucket: bob
+  region: us-east-1

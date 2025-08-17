@@ -1,6 +1,8 @@
 package t1internship.visualizationservice.api.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,17 +14,17 @@ import t1internship.visualizationservice.data.entity.FloorVisualization;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/floors")
+@RequestMapping("/api/v1/floors")
 @RequiredArgsConstructor
 public class FloorVisualizationController {
 
     private final FloorVisualizationService floorService;
 
-    @PostMapping("/{floorId}/upload")
+    @PostMapping(value ="/{floorId}/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> uploadFloor(
             @PathVariable Long floorId,
-            @RequestParam("file") MultipartFile file,
-            @RequestBody List<SpaceDto> places) {
+            @RequestPart("file") MultipartFile file,
+            @RequestPart("places") List<SpaceDto> places) {
         try {
             String fileName = floorService.uploadFloor(floorId, file, places);
             return ResponseEntity.ok("Floor uploaded successfully: " + fileName);
