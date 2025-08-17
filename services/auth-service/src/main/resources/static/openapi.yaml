@@ -1,0 +1,314 @@
+openapi: 3.1.0
+info:
+  title: Authentication API
+  description: API for authentication and authorization
+  version: v0
+servers:
+  - url: http://localhost:8080
+    description: Local server
+tags:
+  - name: auth-controller
+    description: Authentication operations
+  - name: jwks-controller
+    description: JSON Web Key Set operations
+  - name: user-controller
+    description: User management operations
+paths:
+  /api/v1/auth/register:
+    post:
+      tags:
+        - auth-controller
+      operationId: register
+      summary: Create user in system
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignUpRequest'
+        required: true
+      responses:
+        '201':
+          description: User created successfully
+        '400':
+          description: Bad request - invalid input data
+        '409':
+          description: Conflict - user already exists
+
+  /api/v1/auth/login:
+    post:
+      tags:
+        - auth-controller
+      operationId: login
+      summary: Authenticate user
+      description: Authenticate user with username and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignInRequest'
+      responses:
+        '200':
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Unauthorized - invalid credentials
+        '400':
+          description: Bad request - invalid input data
+
+  /api/v1/auth/logout:
+    post:
+      tags:
+        - auth-controller
+      operationId: logout
+      summary: Logout user
+      description: Invalidate user's authentication token
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successfully logged out
+        '401':
+          description: Unauthorized - invalid or missing token
+
+  /api/v1/auth/refresh:
+    post:
+      tags:
+        - auth-controller
+      operationId: refreshToken
+      summary: Refresh authentication token
+      description: Get new access token using refresh token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequest'
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Unauthorized - invalid or expired refresh token
+        '400':
+          description: Bad request - invalid input data
+
+  /api/v1/auth/user/{userId}/password/change:
+    post:
+      tags:
+        - user-controller
+      operationId: changePassword
+      summary: Change user password
+      description: Change password for specified user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: User ID
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordRequest'
+      responses:
+        '200':
+          description: Password changed successfully
+        '400':
+          description: Bad request - invalid input data
+        '401':
+          description: Unauthorized - invalid or missing token
+        '403':
+          description: Forbidden - insufficient permissions
+        '404':
+          description: User not found
+
+  /api/v1/auth/user/{userId}/deactivate:
+    post:
+      tags:
+        - user-controller
+      operationId: deactivateUser
+      summary: Deactivate user account
+      description: Mark user account as inactive
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: User ID
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User deactivated successfully
+        '401':
+          description: Unauthorized - invalid or missing token
+        '403':
+          description: Forbidden - insufficient permissions
+        '404':
+          description: User not found
+
+  /api/v1/auth/user/{userId}/reactivate:
+    post:
+      tags:
+        - user-controller
+      operationId: reactivateUser
+      summary: Reactivate user account
+      description: Mark user account as active again
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: User ID
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User reactivated successfully
+        '401':
+          description: Unauthorized - invalid or missing token
+        '403':
+          description: Forbidden - insufficient permissions
+        '404':
+          description: User not found
+
+  /.well-known/jwks.json:
+    get:
+      tags:
+        - jwks-controller
+      operationId: getJwks
+      summary: Get JSON Web Key Set
+      description: Returns the public keys used to verify JWT tokens
+      responses:
+        '200':
+          description: JWKS retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  keys:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        kty:
+                          type: string
+                          example: RSA
+                        kid:
+                          type: string
+                          example: main-key
+                        n:
+                          type: string
+                          description: Base64 URL encoded modulus
+                        e:
+                          type: string
+                          description: Base64 URL encoded exponent
+                        alg:
+                          type: string
+                          example: RS256
+                        use:
+                          type: string
+                          example: sig
+
+components:
+  schemas:
+    SignInRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: example@mail.com
+        password:
+          type: string
+          format: password
+          example: password123
+
+    SignUpRequest:
+      type: object
+      required:
+        - email
+        - password
+        - confirmedPassword
+      properties:
+        email:
+          type: string
+          format: email
+          example: example@mail.com
+        password:
+          type: string
+          format: password
+          example: password123
+        confirmedPassword:
+          type: string
+          format: password
+          example: password123
+
+    AuthResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          description: JWT access token
+        refreshToken:
+          type: string
+          description: JWT refresh token
+
+    RefreshTokenRequest:
+      type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+          description: Valid refresh token
+
+    ChangePasswordRequest:
+      type: object
+      required:
+        - oldPassword
+        - newPassword
+        - confirmedNewPassword
+      properties:
+        oldPassword:
+          type: string
+          format: password
+          description: Current password
+          example: oldPassword123
+        newPassword:
+          type: string
+          format: password
+          description: New password
+          example: newPassword456
+        confirmedNewPassword:
+          type: string
+          format: password
+          description: Confirmation of new password
+          example: newPassword456
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token for authentication

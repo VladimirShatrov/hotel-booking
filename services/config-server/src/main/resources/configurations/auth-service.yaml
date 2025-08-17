@@ -6,15 +6,15 @@ spring:
       ddl-auto: update
   data:
     redis:
-      host: ${TOKEN_CACHE_REDIS_HOST:localhost}
-      port: ${TOKEN_CACHE_REDIS_PORT:6379}
+      host: localhost
+      port: 6379
 
   datasource:
-    url: jdbc:postgresql://${ACCOUNT_DB_HOST:localhost}:${ACCOUNT_DB_PORT:5434}/${ACCOUNT_DB:accounts}
-    username: ${ACCOUNT_DB_USER:user}
-    password: ${ACCOUNT_DB_PASSWORD:password}
+    url: jdbc:postgresql://localhost:5432/places?schema=account_schema
+    username: user
+    password: user
   kafka:
-    bootstrap-servers: ${KAFKA_HOST:localhost}:${KAFKA_PORT:9092}
+    bootstrap-servers: localhost:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -37,3 +37,7 @@ jwt:
 logging:
   level:
     org.springframework.security: DEBUG
+flyway:
+  locations: classpath:db/migration
+  schemas: account_schema
+  baseline-on-migrate: true
