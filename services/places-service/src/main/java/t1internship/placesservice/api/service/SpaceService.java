@@ -16,6 +16,7 @@ import t1internship.placesservice.data.entity.Spaces.Space;
 import t1internship.placesservice.data.repository.FloorRepository;
 import t1internship.placesservice.data.repository.SpaceRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -36,13 +37,14 @@ public class SpaceService {
 
     @Transactional
     @CachePut(value = "spaces", key = "#result.id")
-    public SpaceResponse createSpace(SpaceRequest spaceRequest, Long id) {
-        Floor floor = floorRepository.findById(id)
+    public SpaceResponse createSpace(SpaceRequest spaceRequest, Long floorId) {
+        Floor floor = floorRepository.findById(floorId)
                 .orElseThrow(() -> new NotFoundFloorException(
-                        String.format("Not found Floor with id: %d", id)));
+                        String.format("Not found Floor with id: %d", floorId)));
         Space space = SpaceMapper.toEntity(spaceRequest);
-        floor.getSpaces().add(space);
         space.setFloor(floor);
+        space = spaceRepository.save(space);
+        floor.getSpaces().add(space);
         floorRepository.save(floor);
         return SpaceMapper.toResponse(space);
     }
@@ -53,15 +55,16 @@ public class SpaceService {
         Floor floor = floorRepository.findById(floorId)
                 .orElseThrow(() -> new NotFoundFloorException(
                         String.format("Not found Floor with id: %d", floorId)));
-        List<Space> spaces = spaceRequests.stream()
-                .map(SpaceMapper::toEntity)
-                .toList();
-        for (Space space : spaces) {
-            floor.getSpaces().add(space);
+        List<Space> savedSpaces = new ArrayList<>();
+        for (SpaceRequest request : spaceRequests) {
+            Space space = SpaceMapper.toEntity(request);
             space.setFloor(floor);
+            space = spaceRepository.save(space);
+            savedSpaces.add(space);
+            floor.getSpaces().add(space);
         }
         floorRepository.save(floor);
-        return spaces.stream()
+        return savedSpaces.stream()
                 .map(SpaceMapper::toResponse)
                 .toList();
     }

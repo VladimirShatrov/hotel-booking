@@ -45,9 +45,11 @@ public class FloorService {
     @CachePut(value = "floors", key = "#result.id")
     public FloorResponse createFloor(FloorRequest floorRequest, Long id) {
         Location location = locationRepository.findById(id)
-                .orElseThrow(() -> new NotFoundLocationException(
-                        String.format("Not found Location with id: %d", id)));
+                .orElseThrow(() -> new NotFoundLocationException("Not found Location with id: " + id));
         Floor floor = FloorMapper.toEntity(floorRequest);
+        floor.setLocation(location);
+        floor = floorRepository.save(floor);
+        FloorMapper.toEntity(floorRequest);
         location.addFloor(floor);
         locationRepository.save(location);
         return FloorMapper.toResponse(floor);
@@ -80,6 +82,8 @@ public class FloorService {
                 .map(FloorMapper::toEntity)
                 .toList();
         for (Floor floor : floors) {
+            floor.setLocation(location);
+            floorRepository.save(floor);
             location.addFloor(floor);
         }
         locationRepository.save(location);
