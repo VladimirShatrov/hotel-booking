@@ -149,3 +149,16 @@ dockerdeploy-order-service:
       -e EUREKA_HOST=discovery-service
       -e EUREKA_PORT=8761
       -e SERVER_PORT=8004
+
+dockerdeploy-apigateway-service:
+  extends: .docker-deploy
+  needs: ["dockerdeploy-order-service"]
+  variables:
+    SERVICE_NAME: "apigateway-service"
+    SERVICE_PORT: 8010
+    ENV_VARS: >-
+      -e SPRING_PROFILES_ACTIVE=prod
+      -e EUREKA_HOST=discovery-service
+      -e EUREKA_PORT=8761
+      -e SERVER_PORT=8010
+

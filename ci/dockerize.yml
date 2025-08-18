@@ -54,4 +54,17 @@ dockerbuild-order-service:
     SERVICE_NAME: "order-service"
     BUILD_CONTEXT_PATH: services/order-service
     DOCKERFILE_PATH: services/order-service/Dockerfile
-  
+
+dockerbuild-order-service:
+  extends: .docker-build
+  variables:
+    SERVICE_NAME: "order-service"
+    BUILD_CONTEXT_PATH: services/order-service
+    DOCKERFILE_PATH: services/order-service/Dockerfile
+
+dockerbuild-apigateway-service:
+  extends: .docker-build
+  variables:
+    SERVICE_NAME: "apigateway-service"
+    BUILD_CONTEXT_PATH: services/apigateway-service
+    DOCKERFILE_PATH: services/apigateway-service/Dockerfile
