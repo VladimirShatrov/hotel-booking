@@ -7,6 +7,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -14,15 +15,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationToken> {
+public class JwtAuthConverter implements Converter<Jwt, Mono<AbstractAuthenticationToken>> {
 
     @Override
-    public AbstractAuthenticationToken convert(Jwt jwt) {
-        return new JwtAuthenticationToken(
-                jwt,
-                extractAuthorities(jwt),
-                jwt.getClaimAsString("preferred_username")
-        );
+    public Mono<AbstractAuthenticationToken> convert(Jwt jwt) {
+        return Mono.fromCallable(() -> {
+            Collection<GrantedAuthority> authorities = extractAuthorities(jwt);
+            return new JwtAuthenticationToken(jwt, authorities, jwt.getSubject());
+        });
     }
 
     private Collection<GrantedAuthority> extractAuthorities(Jwt jwt) {

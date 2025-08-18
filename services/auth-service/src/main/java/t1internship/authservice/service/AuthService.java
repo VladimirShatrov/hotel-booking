@@ -62,14 +62,8 @@ public class AuthService implements AuthInPort {
         checkUserEmail(request.email());
         checkPassword(request.password(), request.confirmPassword());
         final Role userRole;
-        if (request.email() != null && request.email().contains("admin")) {
-            userRole = this.roleRepository.findByName("ROLE_ADMIN")
-                    .orElseThrow(() -> new EntityNotFoundException("не удалось найти роль: ROLE_ADMIN"));
-        }
-        else {
-            userRole = this.roleRepository.findByName("ROLE_GUEST")
+        userRole = this.roleRepository.findByName("ROLE_GUEST")
                     .orElseThrow(() -> new EntityNotFoundException("не удалось найти роль: ROLE_GUEST"));
-        }
         final List<Role> roles = new ArrayList<>();
         roles.add(userRole);
 

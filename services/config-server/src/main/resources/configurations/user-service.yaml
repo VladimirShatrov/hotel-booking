@@ -18,7 +18,7 @@ spring:
     hibernate:
       ddl-auto: none
   datasource:
-    url: jdbc:postgresql://localhost:5432/places?schema=profile_schema
+    url: jdbc:postgresql://localhost:5432/profiles?schema=profile_schema
     username: user
     password: user
   kafka:
