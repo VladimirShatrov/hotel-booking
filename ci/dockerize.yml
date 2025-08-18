@@ -66,5 +66,5 @@ dockerbuild-apigateway-service:
   extends: .docker-build
   variables:
     SERVICE_NAME: "apigateway-service"
-    BUILD_CONTEXT_PATH: services/api-gateway
+    BUILD_CONTEXT_PATH: .
     DOCKERFILE_PATH: services/api-gateway/Dockerfile
