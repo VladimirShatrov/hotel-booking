@@ -33,12 +33,6 @@
         <lombok.version>1.18.32</lombok.version>
     </properties>
     <dependencies>
-
-        <dependency>
-            <groupId>T1-internship</groupId>
-            <artifactId>jwt-security-starter</artifactId>
-            <version>1.0.7</version>
-        </dependency>
         <dependency>
             <groupId>T1-internship</groupId>
             <artifactId>common-dtos</artifactId>

@@ -1,20 +1,14 @@
 package t1internship.security.configuration.starter;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
-import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.server.SecurityWebFilterChain;
 
 @AutoConfiguration
 @EnableMethodSecurity
@@ -31,36 +25,19 @@ public class SecurityAutoConfiguration {
     }
 
     @Bean
-    @Order(1)
-    public SecurityFilterChain publicSecurityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .securityMatcher(properties.publicUrls().toArray(new String[0]))
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-                .csrf(AbstractHttpConfigurer::disable);
-
-        return http.build();
-    }
-
-    @Bean
-    @Order(2)
-    public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .securityMatcher("/api/**")
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt
-                                .decoder(jwtDecoder())
-                                .jwtAuthenticationConverter(jwtAuthConverter)
-                        )
+    public SecurityWebFilterChain WebSecurityFilterChain(ServerHttpSecurity http) {
+        return http
+                .authorizeExchange(exchanges -> exchanges
+                        .pathMatchers(properties.getPublicUrls()).permitAll()
+                        .pathMatchers("/api/**").authenticated()
                 )
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                );
-
-        return http.build();
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter))
+                )
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .build();
     }
-    @Bean
+    @Bean(name = "customJwtDecoder")
     @ConditionalOnMissingBean
     public JwtDecoder jwtDecoder() {
         return NimbusJwtDecoder.withJwkSetUri(properties.jwkSetUri()).build();

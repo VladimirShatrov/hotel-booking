@@ -10,7 +10,7 @@ spring:
       port: 6379
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/places?schema=account_schema
+    url: jdbc:postgresql://localhost:5432/accounts?schema=account_schema
     username: user
     password: user
   kafka:

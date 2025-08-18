@@ -1,11 +1,5 @@
 spring:
-  cloud:
-    gateway:
-      routes:
-        - id: user-service-route
-          uri: http://10.10.146.230:8003
-          predicates:
-            - Host=user.api.t1.internship
-server:
-  port: 8010
-  forward-headers-strategy: framework
+  config:
+    import: optional:configserver:http://localhost:8888
+  application:
+    name: api-gateway
