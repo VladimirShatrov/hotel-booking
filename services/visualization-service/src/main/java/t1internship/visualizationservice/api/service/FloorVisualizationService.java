@@ -36,14 +36,9 @@ public class FloorVisualizationService {
 
     @Transactional
     public String uploadFloor(Long floorId, MultipartFile file, List<SpaceDto> spacesDtoList ) throws IOException, ServerException, InsufficientDataException, ErrorResponseException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
-//        if(!placesServiceClient.checkFloorExists(floorId)){
-//            throw new NotFoundFloorException("Not found floor with id: "+ floorId);
-//        }
-//        for (SpaceDto space : spacesDtoList) {
-//            if (!placesServiceClient.checkPlaceExists(space.getPlaceId())) {
-//                throw new NotFoundSpaceException("Not found space with id: "+ space.getPlaceId());
-//            }
-//        }
+        if(!placesServiceClient.checkFloorExists(floorId)){
+            throw new NotFoundFloorException("Not found floor with id: "+ floorId);
+        }
         String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
         minioClient.putObject(
                 PutObjectArgs.builder()
@@ -60,10 +55,10 @@ public class FloorVisualizationService {
 
     @Transactional
     public FloorResponseDto getFloor(Long floorId) throws Exception {
-        FloorVisualization floorImage = (FloorVisualization) floorVisualizationRepository.findByFloorId(floorId)
+        FloorVisualization floorVisualization=  floorVisualizationRepository.findByFloorId(floorId)
                 .orElseThrow(() -> new IllegalArgumentException("Floor not found"));
-        String presignedUrl = minioConfig.getPresignedUrl(minioClient, bucketName, floorImage.getImageUrl());
-        List<SpaceDto> places = floorImage.getSpaceCoordinates().stream().map(p ->
+        String presignedUrl = minioConfig.getPresignedUrl(minioClient, bucketName, floorVisualization.getImageUrl());
+        List<SpaceDto> places = floorVisualization.getSpaceCoordinates().stream().map(p ->
                 new SpaceDto(p.getSpaceId(), p.getX(), p.getY())
         ).collect(Collectors.toList());
         return new FloorResponseDto(presignedUrl, places);

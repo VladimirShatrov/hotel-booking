@@ -9,12 +9,12 @@ import org.springframework.web.multipart.MultipartFile;
 import t1internship.visualizationservice.api.dto.FloorResponseDto;
 import t1internship.visualizationservice.api.dto.SpaceDto;
 import t1internship.visualizationservice.api.service.FloorVisualizationService;
-import t1internship.visualizationservice.data.entity.FloorVisualization;
+
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/floors")
+@RequestMapping("/api/v1/floors/vis")
 @RequiredArgsConstructor
 public class FloorVisualizationController {
 
@@ -39,6 +39,7 @@ public class FloorVisualizationController {
             FloorResponseDto response = floorService.getFloor(floorId);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return ResponseEntity.badRequest().body(null);
         }
     }

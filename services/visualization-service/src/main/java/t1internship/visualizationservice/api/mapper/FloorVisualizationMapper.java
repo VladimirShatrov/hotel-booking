@@ -19,7 +19,7 @@ public class FloorVisualizationMapper {
         floorVisualization.setImageUrl(fileName);
         List<SpaceCoordinates> coordinates = spaces.stream().map(p -> {
         SpaceCoordinates coord = new SpaceCoordinates();
-        coord.setSpaceId(p.getPlaceId());
+        coord.setSpaceId(p.getSpaceId());
         coord.setX(p.getX());
         coord.setY(p.getY());
         coord.setFloorVisualization(floorVisualization);

@@ -9,7 +9,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class SpaceDto {
     @NotNull(message = "placeId cannot be null")
-    private Long placeId;
+    private Long spaceId;
     private int x;
     private int y;
 }
