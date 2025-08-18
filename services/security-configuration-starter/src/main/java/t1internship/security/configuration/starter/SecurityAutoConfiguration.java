@@ -1,5 +1,6 @@
 package t1internship.security.configuration.starter;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -10,9 +11,12 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
+import java.util.Arrays;
+
 @AutoConfiguration
 @EnableMethodSecurity
 @EnableConfigurationProperties(JwtSecurityProperties.class)
+@Slf4j
 public class SecurityAutoConfiguration {
 
     private final JwtAuthConverter jwtAuthConverter;
@@ -22,15 +26,22 @@ public class SecurityAutoConfiguration {
                                      JwtSecurityProperties properties) {
         this.jwtAuthConverter = jwtAuthConverter;
         this.properties = properties;
+        log.info("SECURITY PUBLIC URLS: {}", Arrays.toString(properties.getPublicUrls()));
     }
 
     @Bean
     public SecurityWebFilterChain WebSecurityFilterChain(ServerHttpSecurity http) {
+        String[] publicUrls = properties.getPublicUrls();
+        if (publicUrls.length == 0) {
+            log.warn("NO PUBLIC URLS");
+        }
         return http
-                .authorizeExchange(exchanges -> exchanges
-                        .pathMatchers(properties.getPublicUrls()).permitAll()
-                        .pathMatchers("/api/**").authenticated()
-                )
+                .authorizeExchange(exchanges -> {
+                    if (publicUrls.length > 0) {
+                        exchanges.pathMatchers(publicUrls).permitAll();
+                    }
+                    exchanges.anyExchange().authenticated();
+                })
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter))
                 )
