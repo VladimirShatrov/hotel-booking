@@ -5,11 +5,6 @@ COPY services/shared/pom.xml .
 COPY services/shared/src ./src
 RUN mvn install -DskipTests
 
-WORKDIR /build/security-starter
-COPY services/security-configuration-starter/pom.xml .
-COPY services/security-configuration-starter/src ./src
-RUN mvn install -DskipTests
-
 WORKDIR /build/user-service
 COPY services/user-service/pom.xml .
 RUN mvn dependency:go-offline -B

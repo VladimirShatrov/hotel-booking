@@ -36,16 +36,3 @@ flyway:
   locations: classpath:db/migration
   schemas: profile_schema
   baseline-on-migrate: true
-app:
-  security:
-    jwt:
-      jwkSetUri: http://localhost:8006/.well-known/jwks.json
-      publicUrls:
-        - "/v3/api-docs/**"
-        - "/actuator/**"
-        - "/swagger-ui/**"
-        - "/swagger-ui.html"
-        - "/swagger-resources/**"
-        - "/webjars/**"
-        - "/favicon.ico"
-        - "/error"
