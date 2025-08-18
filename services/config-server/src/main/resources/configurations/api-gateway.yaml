@@ -1,12 +1,6 @@
 spring:
   application:
     name: api-gateway
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://auth-service
-          jwk-set-uri: ${app.security.jwt.jwkSetUri}
   cloud:
     gateway:
       server:
