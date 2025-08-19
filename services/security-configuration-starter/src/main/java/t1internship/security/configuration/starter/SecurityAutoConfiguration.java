@@ -54,8 +54,10 @@ public class SecurityAutoConfiguration {
         }
         return http
                 .authorizeExchange(exchanges -> {
-                    if (properties.getPublicUrls().length > 0) {
+                    if (properties.getPublicUrls().length == 0) {
                         exchanges.pathMatchers(PUBLIC_URLS).permitAll();
+                    } else {
+                        exchanges.pathMatchers(properties.getPublicUrls()).permitAll();
                     }
                     exchanges.anyExchange().authenticated();
                 })
