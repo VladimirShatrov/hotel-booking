@@ -34,6 +34,8 @@ public class SecurityAutoConfiguration {
             "/api/v1/auth/**"
     };
 
+    private static final String JWK_SET_URI = "http://auth-service:8006/.well-known/jwks.json";
+
 
     private final JwtAuthConverter jwtAuthConverter;
     private final JwtSecurityProperties properties;
@@ -47,12 +49,12 @@ public class SecurityAutoConfiguration {
 
     @Bean
     public SecurityWebFilterChain WebSecurityFilterChain(ServerHttpSecurity http) {
-        if (PUBLIC_URLS.length == 0) {
+        if (properties.getPublicUrls().length == 0) {
             log.warn("NO PUBLIC URLS");
         }
         return http
                 .authorizeExchange(exchanges -> {
-                    if (PUBLIC_URLS.length > 0) {
+                    if (properties.getPublicUrls().length > 0) {
                         exchanges.pathMatchers(PUBLIC_URLS).permitAll();
                     }
                     exchanges.anyExchange().authenticated();
@@ -67,6 +69,10 @@ public class SecurityAutoConfiguration {
     @Bean(name = "customJwtDecoder")
     @ConditionalOnMissingBean
     public ReactiveJwtDecoder jwtDecoder() {
+        if (properties.jwkSetUri().isEmpty()) {
+            log.warn("JWK URI IS EMPTY: {}", properties.jwkSetUri());
+            return NimbusReactiveJwtDecoder.withJwkSetUri(JWK_SET_URI).build();
+        }
         return NimbusReactiveJwtDecoder.withJwkSetUri(properties.jwkSetUri()).build();
     }
 }
