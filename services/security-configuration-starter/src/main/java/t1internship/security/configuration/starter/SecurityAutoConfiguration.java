@@ -69,7 +69,7 @@ public class SecurityAutoConfiguration {
     @Bean(name = "customJwtDecoder")
     @ConditionalOnMissingBean
     public ReactiveJwtDecoder jwtDecoder() {
-        if (properties.jwkSetUri().isEmpty()) {
+        if (properties.jwkSetUri().isBlank()) {
             log.warn("JWK URI IS EMPTY: {}", properties.jwkSetUri());
             return NimbusReactiveJwtDecoder.withJwkSetUri(JWK_SET_URI).build();
         }
