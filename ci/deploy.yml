@@ -65,11 +65,6 @@
       exit 0
       END_SSH
 
-workflow:
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "web"  # Только ручной запуск через UI
-    - when: never
-
 dockerdeploy-config-server:
   extends: .docker-deploy
   variables:
