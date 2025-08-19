@@ -19,8 +19,6 @@ import t1internship.authservice.port.out.RefreshTokenRepository;
 import t1internship.authservice.port.out.UserRepository;
 import t1internship.authservice.service.JwtService;
 
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.ArrayList;
@@ -68,11 +66,11 @@ class JwtServiceTest {
 
         testAccessToken = new AccessToken();
         testAccessToken.setId(testEmail);
-        testAccessToken.setAccessToken(new ArrayList<>(List.of("existing.access.token")));
+        testAccessToken.setAccessToken(new ArrayList<>(List.of(testToken)));
 
         testRefreshToken = new RefreshToken();
         testRefreshToken.setId(testEmail);
-        testRefreshToken.setRefreshToken("existing.refresh.token");
+        testRefreshToken.setRefreshToken(testToken);
     }
 
     @Test
@@ -137,67 +135,102 @@ class JwtServiceTest {
     }
 
     @Test
-    void isTokenValid_ExpiredToken_ReturnsFalse() {
+    public void isTokenValid_ExpiredToken_ReturnsFalse() {
         Claims claims = mock(Claims.class);
         when(claims.getSubject()).thenReturn(testEmail);
-        when(claims.getExpiration()).thenReturn(new Date(System.currentTimeMillis() - 10000));
+        when(claims.getExpiration()).thenReturn(new Date(System.currentTimeMillis() - 600000));
 
-        when(publicKey.getAlgorithm()).thenReturn("RSA");
-        when(Jwts.parser().verifyWith(publicKey).build().parseSignedClaims(testToken).getPayload())
-                .thenReturn(claims);
+        try (MockedStatic<Jwts> jwtsMock = Mockito.mockStatic(Jwts.class)) {
 
-        boolean isValid = jwtService.isTokenValid(testToken, testEmail);
+            JwtParserBuilder parserBuilder = mock(JwtParserBuilder.class);
+            JwtParser parser = mock(JwtParser.class);
+            Jws<Claims> jws = mock(Jws.class);
 
-        assertFalse(isValid);
+            jwtsMock.when(Jwts::parser).thenReturn(parserBuilder);
+            when(parserBuilder.verifyWith(any(PublicKey.class))).thenReturn(parserBuilder);
+            when(parserBuilder.build()).thenReturn(parser);
+            when(parser.parseSignedClaims(testToken)).thenReturn(jws);
+            when(jws.getPayload()).thenReturn(claims);
+
+            boolean isValid = jwtService.isTokenValid(testToken, testEmail);
+            assertFalse(isValid);
+        }
     }
 
     @Test
-    void isTokenValid_WithdrawnToken_ReturnsFalse() {
+    public void isTokenValid_WithdrawnToken_ReturnsFalse() {
         Claims claims = mock(Claims.class);
         when(claims.getSubject()).thenReturn(testEmail);
-        when(claims.getExpiration()).thenReturn(new Date(System.currentTimeMillis() + 10000));
+        when(claims.getExpiration()).thenReturn(new Date(System.currentTimeMillis() + 600000));
 
-        when(publicKey.getAlgorithm()).thenReturn("RSA");
-        when(Jwts.parser().verifyWith(publicKey).build().parseSignedClaims(testToken).getPayload())
-                .thenReturn(claims);
+        try (MockedStatic<Jwts> jwtsMock = Mockito.mockStatic(Jwts.class)) {
 
-        when(accessTokenRepository.findById(testEmail)).thenReturn(Optional.empty());
+            JwtParserBuilder parserBuilder = mock(JwtParserBuilder.class);
+            JwtParser parser = mock(JwtParser.class);
+            Jws<Claims> jws = mock(Jws.class);
 
-        boolean isValid = jwtService.isTokenValid(testToken, testEmail);
+            jwtsMock.when(Jwts::parser).thenReturn(parserBuilder);
+            when(parserBuilder.verifyWith(any(PublicKey.class))).thenReturn(parserBuilder);
+            when(parserBuilder.build()).thenReturn(parser);
+            when(parser.parseSignedClaims(testToken)).thenReturn(jws);
+            when(jws.getPayload()).thenReturn(claims);
 
-        assertFalse(isValid);
+            when(accessTokenRepository.findById(testEmail))
+                    .thenReturn(Optional.empty());
+
+            boolean isValid = jwtService.isTokenValid(testToken, testEmail);
+            assertFalse(isValid);
+        }
     }
 
     @Test
-    void isTokenExpired_NotExpired_ReturnsFalse() {
+    public void isTokenExpired_NotExpired_ReturnsFalse() {
         Claims claims = mock(Claims.class);
-        when(claims.getExpiration()).thenReturn(new Date(System.currentTimeMillis() + 10000));
+        when(claims.getExpiration()).thenReturn(new Date(System.currentTimeMillis() + 600000));
 
-        when(publicKey.getAlgorithm()).thenReturn("RSA");
-        when(Jwts.parser().verifyWith(publicKey).build().parseSignedClaims(testToken).getPayload())
-                .thenReturn(claims);
+        try (MockedStatic<Jwts> jwtsMock = Mockito.mockStatic(Jwts.class)) {
 
-        boolean isExpired = jwtService.isTokenExpired(testToken);
+            JwtParserBuilder parserBuilder = mock(JwtParserBuilder.class);
+            JwtParser parser = mock(JwtParser.class);
+            Jws<Claims> jws = mock(Jws.class);
 
-        assertFalse(isExpired);
+            jwtsMock.when(Jwts::parser).thenReturn(parserBuilder);
+            when(parserBuilder.verifyWith(any(PublicKey.class))).thenReturn(parserBuilder);
+            when(parserBuilder.build()).thenReturn(parser);
+            when(parser.parseSignedClaims(testToken)).thenReturn(jws);
+            when(jws.getPayload()).thenReturn(claims);
+
+            boolean isExpired = jwtService.isTokenExpired(testToken);
+
+            assertFalse(isExpired);
+        }
     }
 
     @Test
-    void isTokenExpired_Expired_ReturnsTrue() {
+    public void isTokenExpired_Expired_ReturnsTrue() {
         Claims claims = mock(Claims.class);
-        when(claims.getExpiration()).thenReturn(new Date(System.currentTimeMillis() - 10000));
+        when(claims.getExpiration()).thenReturn(new Date(System.currentTimeMillis() - 600000));
 
-        when(publicKey.getAlgorithm()).thenReturn("RSA");
-        when(Jwts.parser().verifyWith(publicKey).build().parseSignedClaims(testToken).getPayload())
-                .thenReturn(claims);
+        try (MockedStatic<Jwts> jwtsMock = Mockito.mockStatic(Jwts.class)) {
 
-        boolean isExpired = jwtService.isTokenExpired(testToken);
+            JwtParserBuilder parserBuilder = mock(JwtParserBuilder.class);
+            JwtParser parser = mock(JwtParser.class);
+            Jws<Claims> jws = mock(Jws.class);
 
-        assertTrue(isExpired);
+            jwtsMock.when(Jwts::parser).thenReturn(parserBuilder);
+            when(parserBuilder.verifyWith(any(PublicKey.class))).thenReturn(parserBuilder);
+            when(parserBuilder.build()).thenReturn(parser);
+            when(parser.parseSignedClaims(testToken)).thenReturn(jws);
+            when(jws.getPayload()).thenReturn(claims);
+
+            boolean isExpired = jwtService.isTokenExpired(testToken);
+
+            assertTrue(isExpired);
+        }
     }
 
     @Test
-    void dropAllUserTokens_ValidEmail_DeletesTokens() {
+    public void dropAllUserTokens_ValidEmail_DeletesTokens() {
         jwtService.dropAllUserTokens(testEmail);
 
         verify(refreshTokenRepository, times(1)).deleteById(testEmail);
@@ -205,7 +238,7 @@ class JwtServiceTest {
     }
 
     @Test
-    void isRefreshTokenWithdrawn_ValidToken_ReturnsFalse() {
+    public void isRefreshTokenWithdrawn_ValidToken_ReturnsFalse() {
         when(refreshTokenRepository.findById(testEmail)).thenReturn(Optional.of(testRefreshToken));
 
         boolean isWithdrawn = jwtService.isRefreshTokenWithdrawn("existing.refresh.token", testEmail);
@@ -214,7 +247,7 @@ class JwtServiceTest {
     }
 
     @Test
-    void isRefreshTokenWithdrawn_InvalidToken_ReturnsTrue() {
+    public void isRefreshTokenWithdrawn_InvalidToken_ReturnsTrue() {
         when(refreshTokenRepository.findById(testEmail)).thenReturn(Optional.of(testRefreshToken));
 
         boolean isWithdrawn = jwtService.isRefreshTokenWithdrawn("invalid.token", testEmail);
@@ -223,16 +256,16 @@ class JwtServiceTest {
     }
 
     @Test
-    void isAccessTokenWithdrawn_ValidToken_ReturnsFalse() {
+    public void isAccessTokenWithdrawn_ValidToken_ReturnsFalse() {
         when(accessTokenRepository.findById(testEmail)).thenReturn(Optional.of(testAccessToken));
 
-        boolean isWithdrawn = jwtService.isAccessTokenWithdrawn("existing.access.token", testEmail);
+        boolean isWithdrawn = jwtService.isAccessTokenWithdrawn(testToken, testEmail);
 
         assertFalse(isWithdrawn);
     }
 
     @Test
-    void isAccessTokenWithdrawn_InvalidToken_ReturnsTrue() {
+    public void isAccessTokenWithdrawn_InvalidToken_ReturnsTrue() {
         when(accessTokenRepository.findById(testEmail)).thenReturn(Optional.of(testAccessToken));
 
         boolean isWithdrawn = jwtService.isAccessTokenWithdrawn("invalid.token", testEmail);
@@ -241,28 +274,48 @@ class JwtServiceTest {
     }
 
     @Test
-    void refreshToken_ValidRefreshToken_ReturnsNewAccessToken() {
+    public void refreshToken_ValidRefreshToken_ReturnsNewAccessToken() {
         Claims claims = mock(Claims.class);
         when(claims.getSubject()).thenReturn(testEmail);
-        when(claims.get(anyString())).thenReturn("REFRESH_TOKEN");
-        when(claims.getExpiration()).thenReturn(new Date(System.currentTimeMillis() + 10000));
+        when(claims.get("token_type")).thenReturn("REFRESH_TOKEN");
+        when(claims.getExpiration()).thenReturn(new Date(System.currentTimeMillis() + 600000));
 
-        when(publicKey.getAlgorithm()).thenReturn("RSA");
-        when(Jwts.parser().verifyWith(publicKey).build().parseSignedClaims(testToken).getPayload())
-                .thenReturn(claims);
+        try (MockedStatic<Jwts> jwtsMock = mockStatic(Jwts.class)) {
+            JwtParserBuilder parserBuilder = mock(JwtParserBuilder.class);
+            JwtParser parser = mock(JwtParser.class);
+            Jws<Claims> jws = mock(Jws.class);
 
-        when(refreshTokenRepository.findById(testEmail)).thenReturn(Optional.of(testRefreshToken));
-        when(userRepository.findByEmailIgnoreCase(testEmail)).thenReturn(Optional.of(testUser));
-        when(accessTokenRepository.findById(testEmail)).thenReturn(Optional.of(testAccessToken));
-        when(accessTokenRepository.save(testAccessToken)).thenReturn(testAccessToken);
+            jwtsMock.when(Jwts::parser).thenReturn(parserBuilder);
+            when(parserBuilder.verifyWith(any(PublicKey.class))).thenReturn(parserBuilder);
+            when(parserBuilder.build()).thenReturn(parser);
+            when(parser.parseSignedClaims(testToken)).thenReturn(jws);
+            when(jws.getPayload()).thenReturn(claims);
 
-        String newAccessToken = jwtService.refreshToken(testToken);
+            when(refreshTokenRepository.findById(testEmail))
+                    .thenReturn(Optional.of(testRefreshToken));
+            when(userRepository.findByEmailIgnoreCase(testEmail))
+                    .thenReturn(Optional.of(testUser));
 
-        assertNotNull(newAccessToken);
+            AccessToken newAccessTokenEntity = new AccessToken();
+            newAccessTokenEntity.setId(testEmail);
+            newAccessTokenEntity.setAccessToken(new ArrayList<>(List.of("new.access.token")));
+
+            when(accessTokenRepository.findById(testEmail))
+                    .thenReturn(Optional.of(testAccessToken));
+            when(accessTokenRepository.save(any(AccessToken.class)))
+                    .thenReturn(newAccessTokenEntity);
+
+            String newAccessToken = jwtService.refreshToken(testToken);
+            assertNotNull(newAccessToken);
+
+            verify(refreshTokenRepository).findById(testEmail);
+            verify(userRepository).findByEmailIgnoreCase(testEmail);
+            verify(accessTokenRepository).save(any(AccessToken.class));
+        }
     }
 
     @Test
-    void refreshToken_InvalidTokenType_ThrowsException() {
+    public void refreshToken_InvalidTokenType_ThrowsException() {
         Claims claims = mock(Claims.class);
         when(claims.getSubject()).thenReturn(testEmail);
         when(claims.get(anyString())).thenReturn("INVALID_TYPE");
@@ -275,7 +328,7 @@ class JwtServiceTest {
     }
 
     @Test
-    void refreshToken_ExpiredToken_ThrowsException() {
+    public void refreshToken_ExpiredToken_ThrowsException() {
         Claims claims = mock(Claims.class);
         when(claims.getSubject()).thenReturn(testEmail);
         when(claims.get(anyString())).thenReturn("REFRESH_TOKEN");
