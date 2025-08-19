@@ -31,7 +31,8 @@ public class SecurityAutoConfiguration {
             "/webjars/**",
             "/swagger-ui.html",
             "/.well-known/jwks.json",
-            "/api/v1/auth/**"
+            "/api/v1/auth/**",
+            "/favicon.ico"
     };
 
     private static final String JWK_SET_URI = "http://auth-service:8006/.well-known/jwks.json";
