@@ -65,16 +65,13 @@
       exit 0
       END_SSH
 
-
 workflow:
   rules:
     - if: $CI_PIPELINE_SOURCE == "web"  # Только ручной запуск через UI
     - when: never
 
-
 dockerdeploy-config-server:
   extends: .docker-deploy
-  needs: ["clean-backend-docker"]
   variables:
     SERVICE_NAME: "config-server"
     SERVICE_PORT: 8888
