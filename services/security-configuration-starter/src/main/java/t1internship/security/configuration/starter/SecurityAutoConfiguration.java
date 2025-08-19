@@ -7,8 +7,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
+import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
 import java.util.Arrays;
@@ -18,6 +18,22 @@ import java.util.Arrays;
 @EnableConfigurationProperties(JwtSecurityProperties.class)
 @Slf4j
 public class SecurityAutoConfiguration {
+
+    private static final String[] PUBLIC_URLS = {
+            "/v2/api-docs",
+            "/v3/api-docs",
+            "/v3/api-docs/**",
+            "/swagger-resources/**",
+            "/swagger-resources",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui/**",
+            "/webjars/**",
+            "/swagger-ui.html",
+            "/.well-known/jwks.json",
+            "/api/v1/auth/**"
+    };
+
 
     private final JwtAuthConverter jwtAuthConverter;
     private final JwtSecurityProperties properties;
@@ -31,14 +47,13 @@ public class SecurityAutoConfiguration {
 
     @Bean
     public SecurityWebFilterChain WebSecurityFilterChain(ServerHttpSecurity http) {
-        String[] publicUrls = properties.getPublicUrls();
-        if (publicUrls.length == 0) {
+        if (PUBLIC_URLS.length == 0) {
             log.warn("NO PUBLIC URLS");
         }
         return http
                 .authorizeExchange(exchanges -> {
-                    if (publicUrls.length > 0) {
-                        exchanges.pathMatchers(publicUrls).permitAll();
+                    if (PUBLIC_URLS.length > 0) {
+                        exchanges.pathMatchers(PUBLIC_URLS).permitAll();
                     }
                     exchanges.anyExchange().authenticated();
                 })
@@ -48,9 +63,10 @@ public class SecurityAutoConfiguration {
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .build();
     }
+
     @Bean(name = "customJwtDecoder")
     @ConditionalOnMissingBean
-    public JwtDecoder jwtDecoder() {
-        return NimbusJwtDecoder.withJwkSetUri(properties.jwkSetUri()).build();
+    public ReactiveJwtDecoder jwtDecoder() {
+        return NimbusReactiveJwtDecoder.withJwkSetUri(properties.jwkSetUri()).build();
     }
 }
