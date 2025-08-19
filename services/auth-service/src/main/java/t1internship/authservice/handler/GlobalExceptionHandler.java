@@ -1,5 +1,6 @@
 package t1internship.authservice.handler;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import java.net.URI;
 import java.time.Instant;
 
 @RestControllerAdvice
+@Hidden
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
