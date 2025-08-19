@@ -32,6 +32,13 @@
         exit 1
       fi
 
+
+      sudo docker ps -a --format "{{.ID}} {{.Names}}" | grep "${SERVICE_NAME}" | awk '{print $1}' | xargs -r sudo docker stop || true
+      sudo docker ps -a --format "{{.ID}} {{.Names}}" | grep "${SERVICE_NAME}" | awk '{print $1}' | xargs -r sudo docker rm || true
+      
+      sudo docker images --format "{{.Repository}}:{{.Tag}}" | grep "^${CI_REGISTRY_IMAGE}/${SERVICE_NAME}:" | xargs -r sudo docker rmi -f || true
+
+
       if ! sudo docker network inspect app-network >/dev/null 2>&1; then
         echo "Creating network..."
         sudo docker network create app-network || {
@@ -58,30 +65,8 @@
       exit 0
       END_SSH
 
-clean-docker:
-  stage: deploy
-  image: alpine:3.18
-  before_script:
-    - apk add --no-cache openssh-client docker-cli sshpass curl jq
-  script:
-    - |
-      sshpass -p "${SSH_PASSWORD}" ssh \
-        -o StrictHostKeyChecking=no \
-        -o LogLevel=ERROR \
-        ${SSH_SERVER} /bin/sh <<END_SSH
-      set -ex
-
-      sudo docker stop \$(sudo docker ps -aq) || true
-      sudo docker rm \$(sudo docker ps -aq) || true
-
-      sudo docker rmi -f \$(sudo docker images -q) || true
-
-      exit 0
-      END_SSH
-
 dockerdeploy-config-server:
   extends: .docker-deploy
-  needs: ["clean-docker"]
   variables:
     SERVICE_NAME: "config-server"
     SERVICE_PORT: 8888
@@ -149,3 +134,15 @@ dockerdeploy-order-service:
       -e EUREKA_HOST=discovery-service
       -e EUREKA_PORT=8761
       -e SERVER_PORT=8004
+
+dockerdeploy-apigateway-service:
+  extends: .docker-deploy
+  needs: ["dockerdeploy-order-service"]
+  variables:
+    SERVICE_NAME: "apigateway-service"
+    SERVICE_PORT: 8010
+    ENV_VARS: >-
+      -e SPRING_PROFILES_ACTIVE=prod
+      -e EUREKA_HOST=discovery-service
+      -e EUREKA_PORT=8761
+      -e SERVER_PORT=8010

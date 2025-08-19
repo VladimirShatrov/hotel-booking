@@ -57,7 +57,7 @@ public class JwtService implements JwtInPort {
     @Override
     public String generateAccessToken(final String userEmail) {
         final User savedUser = userRepository.findByEmailIgnoreCase(userEmail)
-                .orElseThrow(() -> new UsernameNotFoundException(""));
+                .orElseThrow(() -> new UsernameNotFoundException("Пользователь с email: " + userEmail + " не найден"));
         final Map<String, Object> claims = Map.of(
             TOKEN_TYPE, "ACCESS_TOKEN",
             ROLES, String.join(" | ", savedUser.getRoles().stream()
@@ -89,17 +89,16 @@ public class JwtService implements JwtInPort {
     }
 
     @Override
-    public String generateToken(User user, long expirationMillis) {
-        return null;
-    }
-
-    @Override
     public String extractUserEmail(String token) {
-        return null;
+        return extractClaims(token).getSubject();
     }
 
     @Override
     public boolean isTokenValid(String token, String expectedUserEmail) {
+        if (token == null || expectedUserEmail == null) {
+            return false;
+        }
+
         final String userEmail = extractUserEmail(token);
         return userEmail.equals(expectedUserEmail) && !isTokenExpired(token) && !isAccessTokenWithdrawn(token, userEmail);
     }
@@ -129,19 +128,14 @@ public class JwtService implements JwtInPort {
     }
 
     @Override
-    public Instant extractExpiration(String token) {
-        return null;
-    }
-
-    @Override
     public String refreshToken(final String refreshToken) {
         final Claims claims = extractClaims(refreshToken);
         final String userEmail = claims.getSubject();
         if (!"REFRESH_TOKEN".equals(claims.get(TOKEN_TYPE))) {
-            throw new RuntimeException("");
+            throw new RuntimeException("Не верный тип токена");
         }
         if (isTokenExpired(refreshToken) || isRefreshTokenWithdrawn(refreshToken, userEmail)) {
-            throw new RuntimeException("");
+            throw new RuntimeException("Истек строк хранения токена или токен отозван");
         }
         return generateAccessToken(userEmail);
     }
@@ -164,7 +158,7 @@ public class JwtService implements JwtInPort {
                     .parseSignedClaims(token)
                     .getPayload();
         } catch (final JwtException ex) {
-            throw  new RuntimeException("");
+            throw  new RuntimeException(ex.getMessage());
         }
     }
 }

@@ -2,6 +2,7 @@ package t1internship.authservice.adapter.in.rest;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import t1internship.authservice.dto.ChangePasswordRequest;
 import t1internship.authservice.port.in.UserInPort;
@@ -39,4 +40,12 @@ public class UserController {
         userInPort.reactivateAccount(userId);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/{userId}/give/admin")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> giveAdminRole(@PathVariable UUID userId) {
+        userInPort.giveUserAdminRole(userId);
+        return ResponseEntity.ok().build();
+    }
+
 }

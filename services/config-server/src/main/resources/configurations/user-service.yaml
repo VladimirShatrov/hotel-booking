@@ -7,7 +7,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8002/eureka/
+      defaultZone: http://localhost:8761/eureka/
     healthcheck:
       enabled: true
 server:
@@ -18,7 +18,7 @@ spring:
     hibernate:
       ddl-auto: none
   datasource:
-    url: jdbc:postgresql://localhost:5432/places?schema=profile_schema
+    url: jdbc:postgresql://localhost:5432/profiles?schema=profile_schema
     username: user
     password: user
   kafka:
@@ -36,16 +36,3 @@ flyway:
   locations: classpath:db/migration
   schemas: profile_schema
   baseline-on-migrate: true
-app:
-  security:
-    jwt:
-      jwkSetUri: http://localhost:8006/.well-known/jwks.json
-      publicUrls:
-        - "/v3/api-docs/**"
-        - "/actuator/**"
-        - "/swagger-ui/**"
-        - "/swagger-ui.html"
-        - "/swagger-resources/**"
-        - "/webjars/**"
-        - "/favicon.ico"
-        - "/error"

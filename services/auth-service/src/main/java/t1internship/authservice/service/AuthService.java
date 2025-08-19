@@ -62,14 +62,8 @@ public class AuthService implements AuthInPort {
         checkUserEmail(request.email());
         checkPassword(request.password(), request.confirmPassword());
         final Role userRole;
-        if (request.email() != null && request.email().contains("admin")) {
-            userRole = this.roleRepository.findByName("ROLE_ADMIN")
-                    .orElseThrow(() -> new EntityNotFoundException("не удалось найти роль: ROLE_ADMIN"));
-        }
-        else {
-            userRole = this.roleRepository.findByName("ROLE_GUEST")
+        userRole = this.roleRepository.findByName("ROLE_GUEST")
                     .orElseThrow(() -> new EntityNotFoundException("не удалось найти роль: ROLE_GUEST"));
-        }
         final List<Role> roles = new ArrayList<>();
         roles.add(userRole);
 
@@ -87,14 +81,14 @@ public class AuthService implements AuthInPort {
 
     private void checkPassword(String password, String confirmPassword) {
         if (password == null || !password.equals(confirmPassword)) {
-            throw new RuntimeException("");
+            throw new RuntimeException("Пароли не совпадают");
         }
     }
 
     private void checkUserEmail(String email) {
         final boolean emailExists = this.userRepository.findByEmailIgnoreCase(email).isPresent();
-        if (emailExists) {
-            throw new RuntimeException("");
+        if (emailExists || !email.contains("@")) {
+            throw new RuntimeException("Не верный email");
         }
     }
 

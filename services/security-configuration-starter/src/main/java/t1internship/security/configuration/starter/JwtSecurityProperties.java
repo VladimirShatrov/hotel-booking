@@ -9,9 +9,12 @@ public record JwtSecurityProperties(
         String jwkSetUri,
         List<String> publicUrls
 ) {
+    public JwtSecurityProperties {
+        jwkSetUri = jwkSetUri != null ? jwkSetUri : "";
+        publicUrls = publicUrls != null ? publicUrls : List.of();
+    }
+
     public String[] getPublicUrls() {
-        return publicUrls != null ?
-                publicUrls.toArray(new String[0]) :
-                new String[0];
+        return publicUrls.toArray(new String[0]);
     }
 }
