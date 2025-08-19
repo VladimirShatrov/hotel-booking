@@ -58,7 +58,7 @@
       exit 0
       END_SSH
 
-clean-docker:
+clean-backend-docker:
   stage: deploy
   image: alpine:3.18
   before_script:
@@ -71,10 +71,11 @@ clean-docker:
         ${SSH_SERVER} /bin/sh <<END_SSH
       set -ex
 
-      sudo docker stop \$(sudo docker ps -aq) || true
-      sudo docker rm \$(sudo docker ps -aq) || true
+      export CI_REGISTRY_IMAGE="${CI_REGISTRY_IMAGE}"
 
-      sudo docker rmi -f \$(sudo docker images -q) || true
+      sudo docker ps -aq | grep "^${CI_REGISTRY_IMAGE}" | xargs -r docker stop || true
+      sudo docker ps -aq | grep "^${CI_REGISTRY_IMAGE}" | xargs -r docker rm || true
+      sudo docker images | grep "^${CI_REGISTRY_IMAGE}" | xargs -r docker rmi -f || true
 
       exit 0
       END_SSH
@@ -161,4 +162,3 @@ dockerdeploy-apigateway-service:
       -e EUREKA_HOST=discovery-service
       -e EUREKA_PORT=8761
       -e SERVER_PORT=8010
-
