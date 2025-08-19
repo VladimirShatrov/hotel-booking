@@ -82,7 +82,7 @@ clean-backend-docker:
 
 dockerdeploy-config-server:
   extends: .docker-deploy
-  needs: ["clean-docker"]
+  needs: ["clean-backend-docker"]
   variables:
     SERVICE_NAME: "config-server"
     SERVICE_PORT: 8888
