@@ -3,3 +3,9 @@ spring:
     import: optional:configserver:http://10.10.146.230:8888
   application:
     name: api-gateway
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-service:8761/eureka
+    register-with-eureka: true
+    fetch-registry: true
