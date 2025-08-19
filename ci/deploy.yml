@@ -73,11 +73,10 @@ clean-backend-docker:
 
       export CI_REGISTRY_IMAGE="${CI_REGISTRY_IMAGE}"
 
-      echo ${CI_REGISTRY_IMAGE}
-      sudo docker ps -a | grep "^${CI_REGISTRY_IMAGE}"
-      sudo docker ps -a | grep "^${CI_REGISTRY_IMAGE}" | xargs -r docker stop || true
-      sudo docker ps -a | grep "^${CI_REGISTRY_IMAGE}" | xargs -r docker rm || true
-      sudo docker images | grep "^${CI_REGISTRY_IMAGE}" | xargs -r docker rmi -f || true
+      sudo docker ps -a --format "{{.ID}} {{.Image}}" | grep "${CI_REGISTRY_IMAGE}" | awk '{print $1}' | xargs -r docker stop || true
+      sudo docker ps -a --format "{{.ID}} {{.Image}}" | grep "${CI_REGISTRY_IMAGE}" | awk '{print $1}' | xargs -r docker rm || true
+
+      sudo docker images --format "{{.Repository}}:{{.Tag}}" | grep "^${CI_REGISTRY_IMAGE}" | xargs -r docker rmi -f || true
 
       exit 0
       END_SSH
