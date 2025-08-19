@@ -10,8 +10,6 @@ public interface JwtInPort {
 
     String generateRefreshToken(String userEmail);
 
-    String generateToken(User user, long expirationMillis);
-
     String extractUserEmail(String token);
 
     boolean isTokenValid(String token, String expectedUserEmail);
@@ -23,8 +21,6 @@ public interface JwtInPort {
     boolean isRefreshTokenWithdrawn(String refreshToken, String userEmail);
 
     boolean isAccessTokenWithdrawn(String accessToken, String userEmail);
-
-    Instant extractExpiration(String token);
 
     String refreshToken(String refreshToken);
 }

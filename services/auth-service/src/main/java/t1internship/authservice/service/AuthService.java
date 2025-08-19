@@ -81,14 +81,14 @@ public class AuthService implements AuthInPort {
 
     private void checkPassword(String password, String confirmPassword) {
         if (password == null || !password.equals(confirmPassword)) {
-            throw new RuntimeException("");
+            throw new RuntimeException("Пароли не совпадают");
         }
     }
 
     private void checkUserEmail(String email) {
         final boolean emailExists = this.userRepository.findByEmailIgnoreCase(email).isPresent();
-        if (emailExists) {
-            throw new RuntimeException("");
+        if (emailExists || !email.contains("@")) {
+            throw new RuntimeException("Не верный email");
         }
     }
 
