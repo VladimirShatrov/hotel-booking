@@ -26,7 +26,6 @@ spring:
     locations: classpath:db/migration
     schemas: places_schema
     baseline-on-migrate: true
-
 eureka:
   instance:
     lease-renewal-interval-in-seconds: 30
@@ -37,3 +36,5 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://discovery-service:8761/eureka/
+
+
