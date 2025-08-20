@@ -1,5 +1,6 @@
 package t1intership.userservice.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,5 +69,11 @@ public class UserService implements UserInPort {
     @Override
     public boolean existsById(UUID id) {
         return userRepository.existsById(id);
+    }
+
+    @Override
+    public UserData getUserDataByEmail(String email) {
+        return mapper.entityToDto(userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь с email: " + email + " не найден")));
     }
 }
