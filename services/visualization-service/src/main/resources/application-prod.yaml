@@ -1,11 +1,8 @@
 spring:
-  cloud:
-    config:
-      server:
-        git:
-          uri: https://github.com/portner-boop/kon-repo-proj
   application:
-    name: config-server
+    name: visualization-service
+  config:
+    import: optional:configserver:http://10.10.146.230:8888
   servlet:
     multipart:
       max-file-size: 100MB
@@ -47,5 +44,3 @@ minio:
     bucket: bob
 server:
     port: 8020
-
-

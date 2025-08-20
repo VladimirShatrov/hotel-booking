@@ -1,0 +1,28 @@
+spring:
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+  datasource:
+    url: jdbc:postgresql://localhost:5432/places?schema=visualization_schema
+    username: user
+    password: user
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    database: postgresql
+    show-sql: true
+    properties:
+      hibernate:
+        default_schema: visualization_schema
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+flyway:
+  locations: classpath:db/migration
+  schemas: visualization_schema
+  baseline-on-migrate: true
+minio:
+  url: http://localhost:9000
+  access-key: minioadmin
+  secret-key: minioadmin123
+  bucket: bob

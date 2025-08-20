@@ -61,5 +61,12 @@ public class FloorController {
         return ResponseEntity.ok(floorService.updateFloor(id,floorRequest));
     }
 
+    @GetMapping("/{id}/exists")
+    public ResponseEntity<Void> checkSpaceExistence(@PathVariable Long id) {
+        return floorService.checkExistenceOfSpace(id)
+                ? ResponseEntity.ok().build()
+                : ResponseEntity.notFound().build();
+    }
+
 
 }
