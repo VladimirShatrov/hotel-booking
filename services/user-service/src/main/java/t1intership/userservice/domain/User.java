@@ -18,10 +18,10 @@ public class User {
     @Id
     private UUID id;
 
-    @Column(name = "first_name")
+    @Column(name = "firstname")
     private String firstName;
 
-    @Column(name = "last_name")
+    @Column(name = "lastname")
     private String lastName;
 
     @Column(name = "email", unique = true, nullable = false)
@@ -31,6 +31,6 @@ public class User {
     @ManyToOne
     private Department department;
 
-    @Column(name = "job_title")
+    @Column(name = "jobtitle")
     private String jobTitle;
 }

@@ -13,6 +13,6 @@ public class UserKafkaProducer {
     private final KafkaTemplate<String, UserKafkaData> kafkaTemplate;
 
     public void sendUser(UserKafkaData user) {
-        kafkaTemplate.send(TOPIC ,user);
+        kafkaTemplate.send(TOPIC, user.email(), user);
     }
 }

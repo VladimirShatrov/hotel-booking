@@ -70,6 +70,7 @@ public class AuthService implements AuthInPort {
         final User user = this.userMapper.signUpRequestToUser(request);
         user.setRoles(roles);
         user.setPassword(passwordEncoder.encode(request.password()));
+        user.setEnabled(true);
         User sendUser = this.userRepository.save(user);
         this.userKafkaProducer.sendUser(userMapper.entityToKafkaData(sendUser));
     }

@@ -21,6 +21,19 @@ public class UserController {
 
     @GetMapping(
             produces = MEDIA_TYPE,
+            path = "/me"
+    )
+    public ResponseEntity<UserData> getMyProfile(
+            @RequestHeader("X-User-Email") String email
+    ) {
+        UserData userData = userService.getUserDataByEmail(email);
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf(MEDIA_TYPE))
+                .body(userData);
+    }
+
+    @GetMapping(
+            produces = MEDIA_TYPE,
             path = "/{userId}"
     )
     public ResponseEntity<UserData> getUserProfile(

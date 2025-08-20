@@ -3,3 +3,101 @@ spring:
     import: optional:configserver:http://10.10.146.230:8888
   application:
     name: api-gateway
+  cloud:
+    gateway:
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
+          httpclient:
+            connect-timeout: 1000
+            pool:
+              max-idle-time: 5s
+            response-timeout: 5s
+          metrics:
+            enabled: true
+          routes:
+            - id: auth-service-route
+              uri: lb://auth-service
+              predicates:
+                - Path=/api/v1/auth/**
+              filters:
+                - DedupeResponseHeader=Access-Control-Allow-Origin
+            - id: user-service-route
+              uri: lb://user-service
+              predicates:
+                - Path=/api/v1/user/**, /api/v1/department/**
+              filters:
+                - DedupeResponseHeader=Access-Control-Allow-Origin
+                - name: JwtUserEmailHeaderFilter
+            - id: order-service-route
+              uri: lb://order-service
+              predicates:
+                - Path=/api/v1/orders/**
+              filters:
+                - DedupeResponseHeader=Access-Control-Allow-Origin
+                - name: JwtUserEmailHeaderFilter
+            - id: visualization-service-route
+              uri: lb://visualization-service
+              predicates:
+                - Path=/api/v1/floors/vis/**
+              filters:
+                - DedupeResponseHeader=Access-Control-Allow-Origin
+                - name: JwtUserEmailHeaderFilter
+            - id: places-service-route
+              uri: lb://places-service
+              predicates:
+                - Path=/api/v1/locations/**, /api/v1/floors/**, /api/v1/spaces/**
+              filters:
+                - DedupeResponseHeader=Access-Control-Allow-Origin
+                - name: JwtUserEmailHeaderFilter
+server:
+  port: 8010
+  forward-headers-strategy: framework
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-service:8761/eureka
+    register-with-eureka: true
+    fetch-registry: true
+    healthcheck:
+      enabled: true
+  instance:
+    lease-expiration-duration-in-seconds: 30
+    lease-renewal-interval-in-seconds: 10
+    health-check-url-path: /actuator/health
+    status-page-url-path: /actuator/info
+    instance-id: ${spring.application.name}:${vcap.application.instance_id:${spring.application.instance_id:${random.value}}}
+
+management:
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+    gateway:
+      access: unrestricted
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, gateway, mappings
+    jmx:
+      exposure:
+        include: '*'
+
+app:
+  security:
+    jwt:
+      jwkSetUri: http://auth-service:8006/.well-known/jwks.json
+      publicUrls:
+        - "/v3/api-docs/**"
+        - "/actuator/**"
+        - "/swagger-ui/**"
+        - "/swagger-ui.html"
+        - "/swagger-resources/**"
+        - "/webjars/**"
+        - "/favicon.ico"
+        - "/error"
+        - "/api/v1/auth/**"

@@ -14,4 +14,6 @@ public interface UserInPort {
     UserData save(UserData data);
 
     boolean existsById(UUID id);
+
+    UserData getUserDataByEmail(String email);
 }
