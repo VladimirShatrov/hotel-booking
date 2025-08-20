@@ -3,6 +3,38 @@ spring:
     name: order-service
   config:
     import: optional:configserver:http://10.10.146.230:8888
+  datasource:
+    url: jdbc:postgresql://10.10.146.230:5432/order_repo?schema=order_schema
+    username: order_repo
+    password: order-repo
+    driver-class-name: org.postgresql.Driver
+  jpa:
+      hibernate:
+        ddl-auto: none
+      database: postgresql
+      show-sql: true
+      properties:
+        hibernate:
+          default_schema: order_schema
+      database-platform: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    locations: classpath:db/migration
+    schemas: order_schema
+    baseline-on-migrate: true
+eureka:
+    instance:
+      lease-renewal-interval-in-seconds: 30
+      hostname: localhost
+      appname: order-service
+    client:
+      register-with-eureka: true
+      fetch-registry: true
+      service-url:
+        defaultZone: http://discovery-service:8761/eureka/
+      healthcheck:
+        enabled: true
+server:
+    port: 8004
 places-service:
   base-url: http://10.10.146.230:8082/api/v1/spaces/
 user-service:
