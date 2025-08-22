@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import t1internship.authservice.handler.exception.*;
 
 import java.net.URI;
 import java.time.Instant;
@@ -17,18 +18,67 @@ import java.time.Instant;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleException(Exception e, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> handleException(
+            Exception e,
+            HttpServletRequest request
+    ) {
         return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), URI.create(request.getRequestURI()));
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleEntityNotFoundException(EntityNotFoundException e, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> handleEntityNotFoundException(
+            EntityNotFoundException e,
+            HttpServletRequest request
+    ) {
         return buildResponse(HttpStatus.NOT_FOUND, e.getMessage(), URI.create(request.getRequestURI()));
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleUsernameNotFoundException(UsernameNotFoundException e, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> handleUsernameNotFoundException(
+            UsernameNotFoundException e,
+            HttpServletRequest request
+    ) {
         return buildResponse(HttpStatus.NOT_FOUND, e.getMessage(), URI.create(request.getRequestURI()));
+    }
+
+    @ExceptionHandler(EmailNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleEmailNotValidException(
+            EmailNotValidException e,
+            HttpServletRequest request
+    ) {
+        return buildResponse(HttpStatus.BAD_REQUEST, e.getMessage(), URI.create(request.getRequestURI()));
+    }
+
+    @ExceptionHandler(PasswordDisMatchException.class)
+    public ResponseEntity<ErrorResponse> handlePasswordDisMatchException(
+            PasswordDisMatchException e,
+            HttpServletRequest request
+    ) {
+        return buildResponse(HttpStatus.BAD_REQUEST, e.getMessage(), URI.create(request.getRequestURI()));
+    }
+
+    @ExceptionHandler(RoleException.class)
+    public ResponseEntity<ErrorResponse> handleRoleException(
+            RoleException e,
+            HttpServletRequest request
+    ) {
+        return buildResponse(HttpStatus.BAD_REQUEST, e.getMessage(), URI.create(request.getRequestURI()));
+    }
+
+    @ExceptionHandler(TokenException.class)
+    public ResponseEntity<ErrorResponse> handleTokenException(
+            TokenException e,
+            HttpServletRequest request
+    ) {
+        return buildResponse(HttpStatus.BAD_REQUEST, e.getMessage(), URI.create(request.getRequestURI()));
+    }
+
+    @ExceptionHandler(UserNotEnabledException.class)
+    public ResponseEntity<ErrorResponse> handleUserNotEnabledException(
+            UserNotEnabledException e,
+            HttpServletRequest request
+    ) {
+        return buildResponse(HttpStatus.LOCKED, e.getMessage(), URI.create(request.getRequestURI()));
     }
 
     private ResponseEntity<ErrorResponse> buildResponse(HttpStatus status, String error, URI uri) {

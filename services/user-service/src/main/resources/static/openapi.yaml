@@ -1,0 +1,33 @@
+openapi: 3.1.0
+info:
+  title: User`s profiles API
+  description: APi for managing profiles
+  version: v0
+servers:
+  - url: http://localhost:8080
+    description: Local server
+tags:
+  - name: user-controller
+    description: Profiles operations
+  - name: department-controller
+    description: Department operations
+paths:
+  /api/v1/user/me:
+    get:
+      tags:
+        - user-controller
+      operationId: get profile
+      summary: get my profile
+      parameters:
+        - name: X-User-Email
+          in: header
+          required: true
+          schema:
+            type: string
+            format: email
+          description: User email
+      responses:
+
+
+
+components:

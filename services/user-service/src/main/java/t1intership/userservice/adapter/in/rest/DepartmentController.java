@@ -30,7 +30,7 @@ public class DepartmentController {
 
     @PostMapping(produces = MEDIA_TYPE)
     public ResponseEntity<DepartmentData> createDepartment(
-            @RequestBody @NotNull String departmentName,
+            @RequestBody String departmentName,
             UriComponentsBuilder uriComponentsBuilder
     ) {
         DepartmentData savedDepartment = inPort.save(departmentName);
