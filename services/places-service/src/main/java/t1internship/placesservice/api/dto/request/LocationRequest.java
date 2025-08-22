@@ -30,7 +30,7 @@ public class LocationRequest {
     @Size(max = 10, message = "Building number must not exceed 10 characters")
     private String buildingNumber;
 
-    @Pattern(regexp = "\\d{5}", message = "Postal code must be exactly 5 digits")
+    @Pattern(regexp = "\\d{6}", message = "Postal code must be exactly 6 digits")
     private String postalCode;
 
     @Pattern(regexp = "^\\+?\\d{10,15}$", message = "Phone number must be valid (10-15 digits, optional +)")

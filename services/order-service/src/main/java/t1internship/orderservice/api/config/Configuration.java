@@ -14,6 +14,4 @@ public class Configuration {
         factory.setReadTimeout(5000);
         return new RestTemplate(factory);
     }
-
-
 }
