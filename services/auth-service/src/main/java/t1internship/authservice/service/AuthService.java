@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +15,8 @@ import t1internship.authservice.dto.AuthResponse;
 import t1internship.authservice.dto.RefreshTokenRequest;
 import t1internship.authservice.dto.SignInRequest;
 import t1internship.authservice.dto.SignUpRequest;
+import t1internship.authservice.handler.exception.EmailNotValidException;
+import t1internship.authservice.handler.exception.PasswordDisMatchException;
 import t1internship.authservice.mapper.UserMapper;
 import t1internship.authservice.port.in.AuthInPort;
 import t1internship.authservice.port.in.JwtInPort;
@@ -82,14 +83,14 @@ public class AuthService implements AuthInPort {
 
     private void checkPassword(String password, String confirmPassword) {
         if (password == null || !password.equals(confirmPassword)) {
-            throw new RuntimeException("Пароли не совпадают");
+            throw new PasswordDisMatchException("Пароли не совпадают");
         }
     }
 
     private void checkUserEmail(String email) {
         final boolean emailExists = this.userRepository.findByEmailIgnoreCase(email).isPresent();
         if (emailExists || !email.contains("@")) {
-            throw new RuntimeException("Не верный email");
+            throw new EmailNotValidException("Не верный email");
         }
     }
 

@@ -11,6 +11,7 @@ import t1internship.authservice.domain.AccessToken;
 import t1internship.authservice.domain.RefreshToken;
 import t1internship.authservice.domain.Role;
 import t1internship.authservice.domain.User;
+import t1internship.authservice.handler.exception.TokenException;
 import t1internship.authservice.port.in.JwtInPort;
 import t1internship.authservice.port.out.AccessTokenRepository;
 import t1internship.authservice.port.out.RefreshTokenRepository;
@@ -131,10 +132,10 @@ public class JwtService implements JwtInPort {
         final Claims claims = extractClaims(refreshToken);
         final String userEmail = claims.getSubject();
         if (!"REFRESH_TOKEN".equals(claims.get(TOKEN_TYPE))) {
-            throw new RuntimeException("Не верный тип токена");
+            throw new TokenException("Не верный тип токена");
         }
         if (isTokenExpired(refreshToken) || isRefreshTokenWithdrawn(refreshToken, userEmail)) {
-            throw new RuntimeException("Истек строк хранения токена или токен отозван");
+            throw new TokenException("Истек строк хранения токена или токен отозван");
         }
         return generateAccessToken(userEmail);
     }

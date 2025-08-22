@@ -16,35 +16,35 @@ public class UserController {
 
     private final UserInPort userInPort;
 
-    @PostMapping("/{userId}/password/change")
+    @PostMapping("/me/password/change")
     public ResponseEntity<Void> changePassword(
             @RequestBody ChangePasswordRequest request,
-            @PathVariable UUID userId
+            @RequestHeader("X-User-Email") String userEmail
     ) {
-        userInPort.changePassword(request, userId);
+        userInPort.changePassword(request, userInPort.findUserByEmail(userEmail).id());
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/{userId}/deactivate")
+    @PostMapping("/me/deactivate")
     public ResponseEntity<Void> deactivate(
-            @PathVariable UUID userId
+            @RequestHeader("X-User-Email") String userEmail
     ) {
-        userInPort.deactivateAccount(userId);
+        userInPort.deactivateAccount(userInPort.findUserByEmail(userEmail).id());
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/{userId}/reactivate")
+    @PostMapping("/me/reactivate")
     public ResponseEntity<Void> reactivate(
-            @PathVariable UUID userId
+            @RequestHeader("X-User-Email") String userEmail
     ) {
-        userInPort.reactivateAccount(userId);
+        userInPort.reactivateAccount(userInPort.findUserByEmail(userEmail).id());
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/{userId}/give/admin")
+    @PostMapping("/{userEmail}/give/admin")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> giveAdminRole(@PathVariable UUID userId) {
-        userInPort.giveUserAdminRole(userId);
+    public ResponseEntity<Void> giveAdminRole(@PathVariable String userEmail) {
+        userInPort.giveUserAdminRole(userInPort.findUserByEmail(userEmail).id());
         return ResponseEntity.ok().build();
     }
 
