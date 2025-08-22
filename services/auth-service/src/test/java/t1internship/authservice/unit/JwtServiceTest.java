@@ -241,7 +241,7 @@ class JwtServiceTest {
     public void isRefreshTokenWithdrawn_ValidToken_ReturnsFalse() {
         when(refreshTokenRepository.findById(testEmail)).thenReturn(Optional.of(testRefreshToken));
 
-        boolean isWithdrawn = jwtService.isRefreshTokenWithdrawn("existing.refresh.token", testEmail);
+        boolean isWithdrawn = jwtService.isRefreshTokenWithdrawn(testRefreshToken.getRefreshToken(), testEmail);
 
         assertFalse(isWithdrawn);
     }
@@ -308,9 +308,9 @@ class JwtServiceTest {
             String newAccessToken = jwtService.refreshToken(testToken);
             assertNotNull(newAccessToken);
 
-            verify(refreshTokenRepository).findById(testEmail);
-            verify(userRepository).findByEmailIgnoreCase(testEmail);
-            verify(accessTokenRepository).save(any(AccessToken.class));
+            verify(refreshTokenRepository, times(1)).findById(testEmail);
+            verify(userRepository, times(1)).findByEmailIgnoreCase(testEmail);
+            verify(accessTokenRepository, times(1)).save(any(AccessToken.class));
         }
     }
 
