@@ -1,5 +1,5 @@
 server:
-  port: 8761
+  port: 8888
 spring:
   config:
     import: configserver:http://10.10.146.230:8888
@@ -7,7 +7,7 @@ spring:
     name: discovery-service
 eureka:
   instance:
-    hostname: localhost
+    hostname: 10.10.146.230
   client:
     register-with-eureka: false
     fetch-registry: false
