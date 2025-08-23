@@ -1,6 +1,8 @@
 server:
   port: 8761
 spring:
+  config:
+    import: configserver:http://10.10.146.230:8888
   application:
     name: discovery-service
 eureka:
