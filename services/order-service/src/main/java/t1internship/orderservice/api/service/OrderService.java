@@ -18,6 +18,7 @@ import t1internship.orderservice.api.mapper.OrderMapper;
 import t1internship.orderservice.data.entity.Order;
 import t1internship.orderservice.data.entity.OrderStatus;
 import t1internship.orderservice.data.repository.OrderRepository;
+import t1internship.orderservice.data.repository.OrderRepositoryImpl;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -34,6 +35,7 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final RestTemplate restTemplate;
+    private final OrderRepositoryImpl orderRepositoryImpl;
 
     @Value("${places-service.base-url}")
     private String placesServiceBaseUrl;
@@ -43,23 +45,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse createOrder(OrderRequest orderRequest) {
-        String url1 = placesServiceBaseUrl + orderRequest.getSpaceId() + "/exists";
-        String url2 = userServiceBaseUrl + orderRequest.getUserId() + "/exists";
-        try {
-            ResponseEntity<Void> response1 = restTemplate.getForEntity(url1, Void.class);
-            ResponseEntity<Void> response2 = restTemplate.getForEntity(url2, Void.class);
-            if (!response1.getStatusCode().is2xxSuccessful()) {
-                throw new IllegalArgumentException("Space with id " + orderRequest.getSpaceId() + " does not exist");
-            }
-            if (!response2.getStatusCode().is2xxSuccessful()) {
-                throw new IllegalArgumentException("User with id " + orderRequest.getUserId() + " does not exist");
-            }
-        } catch (HttpClientErrorException e) {
-            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
-                throw new IllegalArgumentException("Space with id " + orderRequest.getSpaceId() + " does not exist");
-            }
-            throw new RuntimeException("Failed to check space existence: " + e.getMessage());
-        }
+        checkSpaceExists(orderRequest.getSpaceId());
         String timeZone = orderRequest.getTimeZone() != null ? orderRequest.getTimeZone() : "UTC";
         LocalDateTime startTimeUtc = orderRequest.getStartTime().atZone(ZoneId.of(timeZone))
                 .withZoneSameInstant(ZoneId.of("UTC")).toLocalDateTime();
@@ -76,6 +62,45 @@ public class OrderService {
         Order order = OrderMapper.toEntity(orderRequest);
         Order savedOrder = orderRepository.save(order);
         return OrderMapper.toResponse(savedOrder);
+    }
+
+    private void checkSpaceExists(Long spaceId) {
+        String url = placesServiceBaseUrl  + spaceId + "/exists";
+        try {
+            ResponseEntity<Void> response = restTemplate.getForEntity(url, Void.class);
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                throw new IllegalArgumentException("Space with id " + spaceId + " does not exist");
+            }
+            System.out.println("ok");
+        } catch (HttpClientErrorException.NotFound e) {
+            throw new IllegalArgumentException("Space with id " + spaceId + " does not exist");
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+                throw new IllegalArgumentException("Space with id " + spaceId + " does not exist");
+            }
+            throw new RuntimeException("Failed to check space existence: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to check space existence: " + e.getMessage());
+        }
+    }
+
+    private void checkUserExists(UUID userId) {
+        String url = userServiceBaseUrl  + userId + "/exists";
+        try {
+            ResponseEntity<Void> response = restTemplate.getForEntity(url, Void.class);
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                throw new IllegalArgumentException("User with id " + userId + " does not exist");
+            }
+        } catch (HttpClientErrorException.NotFound e) {
+            throw new IllegalArgumentException("User with id " + userId + " does not exist");
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+                throw new IllegalArgumentException("User with id " + userId + " does not exist");
+            }
+            throw new RuntimeException("Failed to check user existence: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to check user existence: " + e.getMessage());
+        }
     }
 
     @Transactional
@@ -132,6 +157,24 @@ public class OrderService {
     public List<OrderResponse> getOrdersByUserId(UUID userId) {
         List<Order> orders = orderRepository
                 .findOrdersByUserId(userId);
+        return orders.stream()
+                .map(OrderMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<OrderResponse> getOrdersByFloorId(Long floorId) {
+        List<Order> orders = orderRepository.findOrdersByFloorId(floorId);
+        return orders.stream()
+                .map(OrderMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<OrderResponse> filterOrders(
+            Long floorId, Long spaceId, LocalDateTime startTime,
+                                            LocalDateTime endTime, List<OrderStatus> statuses) {
+        List<Order> orders = orderRepositoryImpl.findOrdersByCriteria(floorId, spaceId, startTime, endTime, statuses);
         return orders.stream()
                 .map(OrderMapper::toResponse)
                 .collect(Collectors.toList());

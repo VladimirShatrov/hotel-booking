@@ -31,4 +31,6 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
     List<Order> findOrdersByUserId(UUID userId);
 
     List<Order> findByStatusIn(List<String> statuses);
+
+    List<Order> findOrdersByFloorId(Long floorId);
 }

@@ -6,4 +6,4 @@ spring:
 places-service:
   base-url: http://localhost:8082/api/v1/spaces/
 user-service:
-  base-url: http://localhost:8082/api/v1/user/
+  base-url: http://localhost:8083/api/v1/user/
