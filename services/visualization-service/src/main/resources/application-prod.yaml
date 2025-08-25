@@ -25,7 +25,8 @@ spring:
     locations: classpath:db/migration
     schemas: visualization_schema
     baseline-on-migrate: true
-
+places-service:
+  base-url: http://10.10.146.230:8082/api/v1/
 eureka:
     instance:
       lease-renewal-interval-in-seconds: 30
