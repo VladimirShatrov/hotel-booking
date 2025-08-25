@@ -61,7 +61,7 @@ public class UserController {
                 .body(user);
     }
 
-    @GetMapping("/{userId}/extsts")
+    @GetMapping("/{userId}/exists")
     public ResponseEntity<Void> exists(
             @PathVariable UUID userId
     ) {

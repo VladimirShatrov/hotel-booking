@@ -29,7 +29,7 @@ spring:
 eureka:
   instance:
     lease-renewal-interval-in-seconds: 30
-    hostname: localhost
+    hostname: places-service
     appname: places-service
   client:
     register-with-eureka: true

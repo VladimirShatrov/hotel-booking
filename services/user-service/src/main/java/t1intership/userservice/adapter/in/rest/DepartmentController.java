@@ -1,6 +1,5 @@
 package t1intership.userservice.adapter.in.rest;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

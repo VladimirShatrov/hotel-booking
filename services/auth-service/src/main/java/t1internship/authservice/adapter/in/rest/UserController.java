@@ -41,8 +41,7 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/{userEmail}/give/admin")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/admin/{userEmail}/give/admin/role")
     public ResponseEntity<Void> giveAdminRole(@PathVariable String userEmail) {
         userInPort.giveUserAdminRole(userInPort.findUserByEmail(userEmail).id());
         return ResponseEntity.ok().build();

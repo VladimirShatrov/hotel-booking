@@ -1,5 +1,6 @@
 package unit;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -63,7 +64,7 @@ public class UserServiceTest {
         UUID id = UUID.randomUUID();
         when(userRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(NoSuchElementException.class, () -> userService.getUserDataById(id));
+        assertThrows(EntityNotFoundException.class, () -> userService.getUserDataById(id));
 
         verify(userRepository, times(1)).findById(id);
         verify(mapper, never()).entityToDto(any());
@@ -127,7 +128,7 @@ public class UserServiceTest {
 
         when(userRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(NoSuchElementException.class, () -> userService.updateProfile(id, request));
+        assertThrows(EntityNotFoundException.class, () -> userService.updateProfile(id, request));
 
         verify(userRepository, times(1)).findById(id);
         verifyNoInteractions(departmentRepository);
@@ -145,7 +146,7 @@ public class UserServiceTest {
         when(userRepository.findById(id)).thenReturn(Optional.of(user));
         when(departmentRepository.findById(departmentId)).thenReturn(Optional.empty());
 
-        assertThrows(NoSuchElementException.class, () -> userService.updateProfile(id, request));
+        assertThrows(EntityNotFoundException.class, () -> userService.updateProfile(id, request));
 
         verify(userRepository, times(1)).findById(id);
         verify(departmentRepository, times(1)).findById(departmentId);

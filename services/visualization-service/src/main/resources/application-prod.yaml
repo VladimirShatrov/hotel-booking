@@ -27,18 +27,17 @@ spring:
     baseline-on-migrate: true
 
 eureka:
-  instance:
-    lease-renewal-interval-in-seconds: 30
-    prefer-ip-address: true
-    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://10.10.146.230:8761/eureka/
-    healthcheck:
-      enabled: true
-
+    instance:
+      lease-renewal-interval-in-seconds: 30
+      hostname: visualization-service
+      appname: visualization-service
+    client:
+      register-with-eureka: true
+      fetch-registry: true
+      service-url:
+        defaultZone: http://discovery-service:8761/eureka/
+      healthcheck:
+        enabled: true
 minio:
   url: http://10.10.146.230:9000
   access-key: minio_root

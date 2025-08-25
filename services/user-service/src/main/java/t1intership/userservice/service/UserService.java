@@ -13,7 +13,6 @@ import t1intership.userservice.repository.DepartmentRepository;
 import t1intership.userservice.repository.UserRepository;
 import t1intership.userservice.port.in.UserInPort;
 
-import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
@@ -27,7 +26,7 @@ public class UserService implements UserInPort {
     @Override
     public UserData getUserDataById(UUID id) {
         return userRepository.findById(id).map(mapper::entityToDto)
-                .orElseThrow(() -> new NoSuchElementException("Пользователь с id: " + id + " не найден"));
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь с id: " + id + " не найден"));
     }
 
 
@@ -36,7 +35,7 @@ public class UserService implements UserInPort {
     public UserData updateProfile(UUID id, UpdateProfileRequest data) {
 
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Пользователь с id: " + id + " не найден"));
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь с id: " + id + " не найден"));
 
         if (data.firstName() != null) {
             user.setFirstName(data.firstName());
@@ -49,7 +48,7 @@ public class UserService implements UserInPort {
         }
         if (data.departmentId() != null) {
             Department department = departmentRepository.findById(data.departmentId())
-                    .orElseThrow(() -> new NoSuchElementException("Отдел с id: " + data.departmentId() + " не найден"));
+                    .orElseThrow(() -> new EntityNotFoundException("Отдел с id: " + data.departmentId() + " не найден"));
             user.setDepartment(department);
         }
 
