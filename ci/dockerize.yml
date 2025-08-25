@@ -68,3 +68,10 @@ dockerbuild-apigateway-service:
     SERVICE_NAME: "apigateway-service"
     BUILD_CONTEXT_PATH: .
     DOCKERFILE_PATH: services/api-gateway/Dockerfile
+
+dockerbuild-vis-service:
+  extends: .docker-build
+  variables:
+    SERVICE_NAME: "visualization-service"
+    BUILD_CONTEXT_PATH: services/visualization-service
+    DOCKERFILE_PATH: services/visualization-service/Dockerfile

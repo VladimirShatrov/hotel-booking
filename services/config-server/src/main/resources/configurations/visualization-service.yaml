@@ -26,3 +26,5 @@ minio:
   access-key: minioadmin
   secret-key: minioadmin123
   bucket: bob
+server:
+  port: 8020
