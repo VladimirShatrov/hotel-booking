@@ -20,7 +20,7 @@ public class FloorVisualizationController {
 
     private final FloorVisualizationService floorService;
 
-    @PostMapping(value ="/{floorId}/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value ="/admin/{floorId}/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> uploadFloor(
             @PathVariable Long floorId,
             @RequestPart("file") MultipartFile file,

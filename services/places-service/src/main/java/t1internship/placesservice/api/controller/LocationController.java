@@ -18,14 +18,14 @@ public class LocationController {
 
     private final LocationService locationService;
 
-    @PostMapping()
+    @PostMapping("/admin")
     public ResponseEntity<LocationResponse> createLocation(
             @Valid @RequestBody LocationRequest locationRequest){
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(locationService.createLocation(locationRequest));
     }
 
-    @PostMapping("/many")
+    @PostMapping("admin/many")
     public ResponseEntity<List<LocationResponse>> createLocations(
             @Valid @RequestBody List<LocationRequest> locationRequest){
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -44,7 +44,7 @@ public class LocationController {
         return ResponseEntity.ok(locationService.getLocationById(id));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/admin/{id}")
     public ResponseEntity<Void> deleteLocation(@PathVariable Long id){
         locationService.deleteLocation(id);
         return ResponseEntity
@@ -52,7 +52,7 @@ public class LocationController {
                 .build();
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/admin/{id}")
     public ResponseEntity<LocationResponse> updateLocation(
             @PathVariable Long id,
             @Valid @RequestBody LocationRequest locationRequest){

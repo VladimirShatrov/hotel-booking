@@ -18,7 +18,7 @@ public class SpaceController {
 
     private final SpaceService spaceService;
 
-    @PostMapping("/{id}")
+    @PostMapping("/admin/{id}")
     public ResponseEntity<SpaceResponse> createSpaceInFloorById(
             @Valid @RequestBody SpaceRequest spaceRequest,
             @PathVariable Long id) {
@@ -26,7 +26,7 @@ public class SpaceController {
                 .body(spaceService.createSpace(spaceRequest,id));
     }
 
-    @PostMapping("/many/{id}")
+    @PostMapping("/admin/many/{id}")
     public ResponseEntity<List<SpaceResponse>> createSpaceInFloorById(
             @Valid @RequestBody List<SpaceRequest> spaceRequests,
             @PathVariable Long id) {
@@ -40,14 +40,14 @@ public class SpaceController {
         return ResponseEntity.ok(spaceService.getSpacesByFloorId(id));
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/admin/{id}")
     public ResponseEntity<SpaceResponse> updateSpace(
             @PathVariable Long id,
             @Valid @RequestBody SpaceRequest spaceRequest) {
         return ResponseEntity.ok(spaceService.updateSpace(id, spaceRequest));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/admin/{id}")
     public ResponseEntity<Void> deleteSpace(
             @PathVariable Long id) {
         spaceService.deleteSpace(id);

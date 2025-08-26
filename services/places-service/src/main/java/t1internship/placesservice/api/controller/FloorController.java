@@ -27,7 +27,7 @@ public class FloorController {
                 .ok(floorService.getFloorsByLocationId(id,includeSpaces));
     }
 
-    @PostMapping("/{id}")
+    @PostMapping("/admin/{id}")
     public ResponseEntity<FloorResponse> createFloorInLocationById(
             @PathVariable Long id,
             @RequestBody FloorRequest floorRequest){
@@ -36,7 +36,7 @@ public class FloorController {
                 .body(floorService.createFloor(floorRequest,id));
     }
 
-    @PostMapping("/many/{id}")
+    @PostMapping("/admin/many/{id}")
     public ResponseEntity<List<FloorResponse>> createFloorsInLocationById(
             @PathVariable Long id,
             @Valid @RequestBody List<FloorRequest> floorRequests) {
@@ -46,7 +46,7 @@ public class FloorController {
 
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/admin/{id}")
     public ResponseEntity<Void> deleteFloor(@PathVariable Long id){
         floorService.deleteFloor(id);
         return ResponseEntity
@@ -54,7 +54,7 @@ public class FloorController {
                 .build();
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("admin/{id}")
     public ResponseEntity<FloorResponse> updateFloor(
             @PathVariable Long id,
             @Valid @RequestBody FloorRequest floorRequest){
