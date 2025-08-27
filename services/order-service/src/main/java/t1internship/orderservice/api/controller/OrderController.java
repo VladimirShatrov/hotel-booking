@@ -24,7 +24,7 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    @PostMapping("/admin")
+    @PostMapping
     public ResponseEntity<OrderResponse> createOrder(@Valid @RequestBody OrderRequest orderRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(orderService.createOrder(orderRequest));
     }
@@ -39,13 +39,13 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrdersByUserId(userId));
     }
 
-    @PatchMapping("/admin/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<OrderResponse> updateOrderById(@PathVariable Long id,
                                                          @Valid @RequestBody UpdateBookingRequest updateRequest) {
         return ResponseEntity.ok(orderService.updateOrderById(id, updateRequest));
     }
 
-    @DeleteMapping("/admin/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrderById(@PathVariable Long id) {
         orderService.deleteOrderById(id);
         return ResponseEntity.noContent().build();

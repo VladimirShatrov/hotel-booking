@@ -67,6 +67,8 @@ public class SecurityAutoConfiguration {
                     } else {
                         exchanges.pathMatchers(properties.getPublicUrls()).permitAll();
                     }
+                    exchanges.pathMatchers("api/v1/location/admin/**", "api/v1/floors/admin/**", "api/v1/floors/spaces/**")
+                                    .hasAnyRole("ADMIN");
                     exchanges.anyExchange().authenticated();
                 })
                 .oauth2ResourceServer(oauth2 -> oauth2

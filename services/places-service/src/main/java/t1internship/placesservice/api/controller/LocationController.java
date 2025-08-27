@@ -25,7 +25,7 @@ public class LocationController {
                 .body(locationService.createLocation(locationRequest));
     }
 
-    @PostMapping("admin/many")
+    @PostMapping("/admin/many")
     public ResponseEntity<List<LocationResponse>> createLocations(
             @Valid @RequestBody List<LocationRequest> locationRequest){
         return ResponseEntity.status(HttpStatus.CREATED)
