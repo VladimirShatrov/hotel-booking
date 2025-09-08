@@ -1,0 +1,141 @@
+# Compiled class files
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+
+# Eclipse
+.project
+.classpath
+.settings/
+bin/
+
+# NetBeans
+nbproject/
+nb-configuration.xml
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+.idea_modules/
+
+# Build output
+target/
+build/
+dist/
+
+# Log files
+*.log
+logs/
+
+# Package Files
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Gradle
+.gradle/
+build/
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Virtual machine crash logs
+hs_err_pid*
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Application properties (optional - если хотите игнорировать локальные конфиги)
+application-local.properties
+application-dev.properties
+
+# Database files (если используете локальные БД)
+*.db
+*.h2.db
+*.mv.db
+
+# Temp files
+tmp/
+temp/
+
+# Coverage reports
+jacoco.exec
+*.exec
+
+# Checkstyle reports
+checkstyle-result.xml
+
+# PMD reports
+pmd.xml
+
+# SpotBugs reports
+spotbugsXml.xml
+
+# SonarQube
+.sonar/
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Kubernetes
+k8s/
+
+# IDE specific (IntelliJ)
+*.swp
+*.swo
+*~
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries
+.idea/vcs.xml
+.idea/jsLibraryMappings.xml
+.idea/datasources.xml
+.idea/dataSources.ids
+.idea/sqlDataSources.xml
+.idea/dynamic.xml
+.idea/uiDesigner.xml
+.idea/aws.xml
+
+# IntelliJ IDEA Run/Debug configurations
+.idea/runConfigurations/
+
+# IntelliJ IDEA coverage
+.idea/coverage/
+
+# IntelliJ IDEA copyright
+.idea/copyright/
+
+# IntelliJ IDEA inspection profiles
+.idea/inspectionProfiles/
+
+# IntelliJ IDEA shelve changes
+.idea/shelf/
