@@ -1,7 +1,0 @@
-stages:
-  - dockerize
-  - deploy
-
-include:
-  - local: 'ci/dockerize.yml'
-  - local: 'ci/deploy.yml'
