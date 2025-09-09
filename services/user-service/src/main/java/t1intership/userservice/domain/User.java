@@ -28,9 +28,6 @@ public class User {
     @NotBlank
     private String email;
 
-    @ManyToOne
-    private Department department;
-
-    @Column(name = "jobtitle")
-    private String jobTitle;
+    @Column(name = "username")
+    private String username;
 }

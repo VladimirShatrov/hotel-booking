@@ -31,27 +31,6 @@ spring:
               filters:
                 - DedupeResponseHeader=Access-Control-Allow-Origin
                 - name: JwtUserEmailHeaderFilter
-            - id: order-service-route
-              uri: lb://order-service
-              predicates:
-                - Path=/api/v1/orders/**
-              filters:
-                - DedupeResponseHeader=Access-Control-Allow-Origin
-                - name: JwtUserEmailHeaderFilter
-            - id: visualization-service-route
-              uri: lb://visualization-service
-              predicates:
-                - Path=/api/v1/floors/vis/**
-              filters:
-                - DedupeResponseHeader=Access-Control-Allow-Origin
-                - name: JwtUserEmailHeaderFilter
-            - id: places-service-route
-              uri: lb://places-service
-              predicates:
-                - Path=/api/v1/locations/**, /api/v1/floors/**, /api/v1/spaces/**
-              filters:
-                - DedupeResponseHeader=Access-Control-Allow-Origin
-                - name: JwtUserEmailHeaderFilter
 server:
   port: 8010
   forward-headers-strategy: framework

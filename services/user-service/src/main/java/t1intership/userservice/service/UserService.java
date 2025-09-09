@@ -4,12 +4,10 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import t1intership.userservice.domain.Department;
 import t1intership.userservice.domain.User;
 import t1intership.userservice.dto.UpdateProfileRequest;
 import t1intership.userservice.dto.UserData;
 import t1intership.userservice.mapper.UserMapper;
-import t1intership.userservice.repository.DepartmentRepository;
 import t1intership.userservice.repository.UserRepository;
 import t1intership.userservice.port.in.UserInPort;
 
@@ -20,7 +18,6 @@ import java.util.UUID;
 public class UserService implements UserInPort {
 
     private final UserRepository userRepository;
-    private final DepartmentRepository departmentRepository;
     private final UserMapper mapper;
 
     @Override
@@ -43,13 +40,8 @@ public class UserService implements UserInPort {
         if (data.lastName() != null) {
             user.setLastName(data.lastName());
         }
-        if (data.jobTitle() != null) {
-            user.setJobTitle(data.jobTitle());
-        }
-        if (data.departmentId() != null) {
-            Department department = departmentRepository.findById(data.departmentId())
-                    .orElseThrow(() -> new EntityNotFoundException("Отдел с id: " + data.departmentId() + " не найден"));
-            user.setDepartment(department);
+        if (data.username() != null) {
+            user.setUsername(data.username());
         }
 
         User updatedUser = userRepository.save(user);

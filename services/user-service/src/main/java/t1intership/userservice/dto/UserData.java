@@ -7,7 +7,6 @@ public record UserData(
         String firstName,
         String lastName,
         String email,
-        String departmentTitle,
-        String jobTitle
+        String username
 ) {
 }

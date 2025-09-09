@@ -25,7 +25,7 @@ public class UserKafkaConsumer {
         log.info("RECEIVED MESSAGE - KEY: {}, DATA: {}", key, data);
 
         UserData user = new UserData(data.id(), null,
-                null, data.email(), null, null);
+                null, data.email(), null);
         inPort.save(user);
     }
 }

@@ -11,6 +11,5 @@ public record UpdateProfileRequest(
         @JsonProperty("lastName")
         @Pattern(regexp = "^[a-zA-Zа-яА-ЯёЁ\\s-]+$", message = "Фамилия может содержать только буквы, пробелы и дефисы")
         String lastName,
-        @JsonProperty("departmentId") Long departmentId,
-        @JsonProperty("jobTitle") String jobTitle
+        @JsonProperty("username") String username
 ) {}
