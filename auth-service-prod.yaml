@@ -27,7 +27,7 @@ spring:
 eureka:
   instance:
     lease-renewal-interval-in-seconds: 30
-    hostname: localhost
+    hostname: auth-service
     appname: auth-service
   client:
     register-with-eureka: true
