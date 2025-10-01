@@ -101,11 +101,6 @@ spotbugsXml.xml
 # SonarQube
 .sonar/
 
-# Docker
-Dockerfile
-docker-compose.yml
-.dockerignore
-
 # Kubernetes
 k8s/
 

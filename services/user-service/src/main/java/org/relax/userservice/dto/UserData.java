@@ -1,0 +1,12 @@
+package org.relax.userservice.dto;
+
+import java.util.UUID;
+
+public record UserData(
+        UUID id,
+        String firstName,
+        String lastName,
+        String email,
+        String username
+) {
+}

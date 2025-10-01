@@ -6,12 +6,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import t1intership.userservice.domain.User;
-import t1intership.userservice.dto.UpdateProfileRequest;
-import t1intership.userservice.dto.UserData;
-import t1intership.userservice.mapper.UserMapper;
-import t1intership.userservice.repository.UserRepository;
-import t1intership.userservice.service.UserService;
+import org.relax.userservice.domain.User;
+import org.relax.userservice.dto.UpdateProfileRequest;
+import org.relax.userservice.dto.UserData;
+import org.relax.userservice.mapper.UserMapper;
+import org.relax.userservice.repository.UserRepository;
+import org.relax.userservice.service.UserService;
 
 import java.util.Optional;
 import java.util.UUID;

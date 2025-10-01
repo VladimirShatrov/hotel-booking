@@ -6,5 +6,15 @@ spring:
       server:
         native:
           search-locations: classpath:/configurations
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, up
+  endpoint:
+    health:
+      show-details: always
+      access: read_only
 server:
   port: 8888
+  address: 0.0.0.0

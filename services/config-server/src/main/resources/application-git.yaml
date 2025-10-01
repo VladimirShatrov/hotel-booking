@@ -3,7 +3,7 @@ spring:
     config:
       server:
         git:
-          uri: https://github.com/portner-boop/kon-repo-proj
+          uri: https://github.com/VladimirShatrov/hotelBookingConfig
   application:
     name: config-server
 

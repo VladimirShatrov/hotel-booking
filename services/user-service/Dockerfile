@@ -1,0 +1,17 @@
+FROM maven:3.9.9-eclipse-temurin-21 AS builder
+
+WORKDIR /build/shared
+COPY services/shared/pom.xml .
+COPY services/shared/src ./src
+RUN mvn install -DskipTests
+
+WORKDIR /build/user-service
+COPY services/user-service/pom.xml .
+RUN mvn dependency:go-offline -B
+COPY services/user-service/src ./src
+RUN mvn clean package -DskipTests
+
+FROM eclipse-temurin:21-jre-jammy
+WORKDIR /app
+COPY --from=builder /build/user-service/target/user-service-*.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]
