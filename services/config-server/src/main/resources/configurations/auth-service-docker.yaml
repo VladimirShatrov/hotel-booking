@@ -15,10 +15,10 @@ spring:
     redis:
       host: redis
       port: 6379
-    password: ${REDIS_PASSWORD:redispass}
+      password: redispass
 
   datasource:
-    url: jdbc:postgresql://postgres_auth:5433/auth_db
+    url: jdbc:postgresql://postgres-auth:5432/auth_db
     username: auth_service
     password: auth_pass
   kafka:
@@ -29,7 +29,7 @@ spring:
 eureka:
   instance:
     lease-renewal-interval-in-seconds: 30
-    hostname: localhost
+    hostname: auth-service
     appname: auth-service
   client:
     register-with-eureka: true

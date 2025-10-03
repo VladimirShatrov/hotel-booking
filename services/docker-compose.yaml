@@ -1,7 +1,7 @@
 services:
-  postgres_auth:
+  postgres-auth:
     image: postgres:16
-    container_name: postgres_auth
+    container_name: postgres-auth
     restart: unless-stopped
     environment:
       POSTGRES_USER: auth_service
@@ -14,9 +14,9 @@ services:
     volumes:
       - postgres_auth_data:/var/lib/postgresql/data
 
-  postgres_user:
+  postgres-user:
     image: postgres:16
-    container_name: postgres_user
+    container_name: postgres-user
     restart: unless-stopped
     environment:
       POSTGRES_USER: user_service
@@ -29,8 +29,54 @@ services:
     volumes:
       - postgres_user_data:/var/lib/postgresql/data
 
-  config_service:
-    container_name: config_service
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - hotel-network
+    command: redis-server --requirepass redispass
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    hostname: zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    networks:
+      - hotel-network
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_SERVERS: zookeeper:2888:3888
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    hostname: kafka
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    networks:
+      - hotel-network
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_BROKER_ID: 1
+      KAFKA_LOG4J_LOGGERS:
+        "kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO"
+      KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.authorizer.AclAuthorizer
+      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+    depends_on:
+      - zookeeper
+
+  config-service:
+    container_name: config-service
     build:
       context: ./config-server
       dockerfile: Dockerfile-jar
@@ -42,8 +88,22 @@ services:
       - SPRING_PROFILES_ACTIVE=native
       - SERVER_ADDRESS=0.0.0.0
 
-  auth_service:
-    container_name: auth_service
+  discovery-service:
+    container_name: discovery-service
+    build:
+      context: ./discovery-service
+      dockerfile: Dockerfile-jar
+    ports:
+      - "8761:8761"
+    networks:
+      - hotel-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - config-service
+
+  auth-service:
+    container_name: auth-service
     build:
       context: ./auth-service
       dockerfile: Dockerfile-jar
@@ -53,6 +113,44 @@ services:
       - hotel-network
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - config-service
+      - discovery-service
+      - postgres-auth
+      - redis
+      - kafka
+
+  user-service:
+    container_name: user-service
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile-jar
+    ports:
+      - "8003:8003"
+    networks:
+      - hotel-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - config-service
+      - discovery-service
+      - postgres-user
+      - kafka
+
+  api-gateway:
+    container_name: api-gateway
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile-jar
+    ports:
+      - "8010:8010"
+    networks:
+      - hotel-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - config-service
+      - discovery-service
 
 volumes:
   postgres_auth_data:
