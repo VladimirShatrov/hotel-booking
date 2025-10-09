@@ -2,8 +2,6 @@ package org.relax.authservice.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.relax.authservice.logger.ILogger;
-import org.relax.authservice.logger.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,16 +37,9 @@ public class AuthService implements AuthInPort {
     private final UserMapper userMapper;
     private final UserKafkaProducer userKafkaProducer;
     private final PasswordEncoder passwordEncoder;
-    //
-    private final LoggerFactory loggerFactory;
 
     @Override
     public AuthResponse login(SignInRequest request) {
-        //
-        ILogger logger = loggerFactory.createLogger(LoggerFactory.LoggerType.AUTH);
-        logger.log("Login attempt");
-
-
         final Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.email(),

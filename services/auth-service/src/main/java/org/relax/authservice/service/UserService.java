@@ -3,8 +3,6 @@ package org.relax.authservice.service;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.relax.authservice.logger.ILogger;
-import org.relax.authservice.logger.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.relax.authservice.domain.Role;
@@ -32,15 +30,9 @@ public class UserService implements UserInPort {
     private final PasswordEncoder passwordEncoder;
     private final UserMapper mapper;
     private final RoleRepository roleRepository;
-    //
-    private final LoggerFactory loggerFactory;
 
     @Override
     public void changePassword(ChangePasswordRequest request, UUID userId) {
-        //
-        ILogger logger = loggerFactory.createLogger(LoggerFactory.LoggerType.USER);
-        logger.log("Changing password for user " + userId);
-
         if (!request.newPassword().equals(request.newPasswordConfirm())) {
             throw new PasswordDisMatchException("Пароли не совпадают: " + request.newPassword() +
                     ", " + request.newPasswordConfirm());
