@@ -1,0 +1,9 @@
+FROM eclipse-temurin:21-jre-jammy
+
+WORKDIR /app
+
+COPY target/room-service-0.0.1-SNAPSHOT.jar ./room-service.jar
+
+EXPOSE 8004
+
+ENTRYPOINT ["java", "-jar", "room-service.jar"]

@@ -1,0 +1,114 @@
+openapi: 3.0.1
+info:
+  description: API для управления комнатами (Room Catalog Service)
+  title: Room Catalog Service API
+  version: 1.0.0
+servers:
+- url: /
+paths:
+  /api/v1/room/{roomId}:
+    get:
+      operationId: getRoom
+      parameters:
+      - explode: false
+        in: path
+        name: roomId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/vnd.t1internship.room.v1+json:
+              schema:
+                $ref: '#/components/schemas/RoomData'
+          description: Успешный ответ
+        "404":
+          description: Комната не найдена
+      summary: Получить данные комнаты по ID
+      x-accepts: application/vnd.t1internship.room.v1+json
+    put:
+      operationId: updateRoom
+      parameters:
+      - explode: false
+        in: path
+        name: roomId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRoomRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/vnd.t1internship.room.v1+json:
+              schema:
+                $ref: '#/components/schemas/RoomData'
+          description: Комната обновлена
+        "404":
+          description: Комната не найдена
+      summary: Обновить данные комнаты
+      x-contentType: application/json
+      x-accepts: application/vnd.t1internship.room.v1+json
+  /api/v1/room/{roomId}/exists:
+    get:
+      operationId: existsRoom
+      parameters:
+      - explode: false
+        in: path
+        name: roomId
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "200":
+          description: Комната существует
+        "404":
+          description: Комната не найдена
+      summary: Проверить, существует ли комната
+      x-accepts: application/json
+components:
+  schemas:
+    RoomData:
+      properties:
+        id:
+          example: b7b8b84c-7b5c-4df4-8d31-cb7c620894d5
+          format: uuid
+          type: string
+        name:
+          example: Conference Room A
+          type: string
+        capacity:
+          example: 20
+          type: integer
+        location:
+          example: 2nd floor
+          type: string
+      type: object
+    UpdateRoomRequest:
+      example:
+        name: New Room Name
+        location: 3rd floor
+        capacity: 25
+      properties:
+        name:
+          example: New Room Name
+          type: string
+        capacity:
+          example: 25
+          type: integer
+        location:
+          example: 3rd floor
+          type: string
+      type: object
+
