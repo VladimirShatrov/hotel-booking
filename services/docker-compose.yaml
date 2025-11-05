@@ -29,6 +29,21 @@ services:
     volumes:
       - postgres_user_data:/var/lib/postgresql/data
 
+  postgres-availability:
+    image: postgres:16
+    container_name: postgres-availability
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: availability_service
+      POSTGRES_PASSWORD: availability_pass
+      POSTGRES_DB: availability_db
+    ports:
+      - "5436:5432"
+    networks:
+      - hotel-network
+    volumes:
+      - postgres_room_availability_data:/var/lib/postgresql/data
+
   redis:
     image: redis:7-alpine
     container_name: redis
@@ -136,6 +151,24 @@ services:
       - discovery-service
       - postgres-user
       - kafka
+      - redis
+
+  room-availability-service:
+    container_name: room-availability-service
+    build:
+      context: ./room-availability-service
+      dockerfile: Dockerfile-jar
+    ports:
+      - "8007:8007"
+    networks:
+      - hotel-network
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - config-service
+      - discovery-service
+      - postgres-availability
+      - kafka
 
   api-gateway:
     container_name: api-gateway
@@ -155,6 +188,7 @@ services:
 volumes:
   postgres_auth_data:
   postgres_user_data:
+  postgres_room_availability_data:
 
 networks:
   hotel-network:
