@@ -28,6 +28,10 @@ spring:
     username: user_service
     password: user_pass
   kafka:
+    admin:
+      properties:
+        default.replication.factor: 1
+        min.insync.replicas: 1
     bootstrap-servers: kafka:9092
     consumer:
       group-id: user-service-group

@@ -14,4 +14,28 @@ public final class OverlapUtils {
     public static boolean isFullyContained(LocalDateTime innerStart, LocalDateTime innerEnd,
                                            LocalDateTime outerStart, LocalDateTime outerEnd) {
         return !innerStart.isBefore(outerStart) && !innerEnd.isAfter(outerEnd);
-    }}
+    }
+
+    public static boolean overlapsFromLeft(LocalDateTime newStart, LocalDateTime newEnd,
+                                           LocalDateTime existingStart, LocalDateTime existingEnd) {
+        return newStart.isBefore(existingStart) && newEnd.isAfter(existingStart) && newEnd.isBefore(existingEnd);
+    }
+
+    public static boolean overlapsFromRight(LocalDateTime newStart, LocalDateTime newEnd,
+                                            LocalDateTime existingStart, LocalDateTime existingEnd) {
+        return newStart.isAfter(existingStart) && newStart.isBefore(existingEnd) && newEnd.isAfter(existingEnd);
+    }
+
+    public static boolean fullyCovers(LocalDateTime outerStart, LocalDateTime outerEnd,
+                                      LocalDateTime innerStart, LocalDateTime innerEnd) {
+        return !outerStart.isAfter(innerStart) && !outerEnd.isBefore(innerEnd);
+    }
+
+    public static boolean isValid(LocalDateTime start, LocalDateTime end) {
+        return start.isBefore(end);
+    }
+
+    public static boolean isTouching(LocalDateTime end1, LocalDateTime start2) {
+        return end1.equals(start2);
+    }
+}

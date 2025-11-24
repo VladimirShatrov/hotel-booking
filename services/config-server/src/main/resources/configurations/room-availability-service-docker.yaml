@@ -1,8 +1,8 @@
 eureka:
   instance:
     lease-renewal-interval-in-seconds: 30
-    hostname: user-service
-    appname: user-service
+    hostname: availability-service
+    appname: availability-service
   client:
     register-with-eureka: true
     fetch-registry: true
@@ -28,6 +28,10 @@ spring:
     username: availability_service
     password: availability_pass
   kafka:
+    admin:
+      properties:
+        default.replication.factor: 1
+        min.insync.replicas: 1
     bootstrap-servers: kafka:9092
     consumer:
       group-id: room-availability-service-group

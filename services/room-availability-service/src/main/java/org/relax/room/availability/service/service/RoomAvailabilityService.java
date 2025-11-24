@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -70,6 +71,19 @@ public class RoomAvailabilityService implements RoomAvailabilityInPort {
 
     @Override
     @Transactional
+    public RoomAvailabilityData save(RoomAvailabilityData availability) {
+        if (availabilityOutPort.existsAnyFromStartDateAndToEndDate(availability.startDate(), availability.endDate())) {
+            throw new RuntimeException("Room availability already exists in this interval");
+        }
+        return mapper.fromEntityToDto(
+                availabilityOutPort.save(
+                        mapper.fromDtoToEntity(availability)
+                )
+        );
+    }
+
+    @Override
+    @Transactional
     public RoomAvailabilityData changeStatus(UUID roomId, RoomStatus newStatus, LocalDateTime startDate,
                                              LocalDateTime endDate, OverlappingPolicy overlappingPolicy, String reason) {
         Room room = roomOutPort.findById(roomId).orElseThrow(
@@ -78,7 +92,7 @@ public class RoomAvailabilityService implements RoomAvailabilityInPort {
 
         var overlapping = availabilityOutPort.findNestedAvailabilityIntervalsByRoom(room, startDate, endDate);
         if (!overlapping.isEmpty()) {
-            log.warn("Try to rewriting existing room availability interval for room {}", roomId);
+            log.warn("Trying to rewrite existing room availability interval for room {}", roomId);
         }
 
         return mapper.fromEntityToDto(changeStatusStrategyFactory.getStrategy(newStatus).apply(
@@ -88,5 +102,16 @@ public class RoomAvailabilityService implements RoomAvailabilityInPort {
                 overlappingPolicy,
                 reason
         ));
+    }
+
+    @Override
+    public List<RoomAvailabilityData> findAllUnavailablePeriodByRoomId(UUID roomId) {
+        Room room = roomOutPort.findById(roomId).orElseThrow(
+                () -> new EntityNotFoundException("Room with id " + roomId + " not found")
+        );
+
+        return availabilityOutPort.findByRoom(room).stream()
+                .map(mapper::fromEntityToDto)
+                .toList();
     }
 }

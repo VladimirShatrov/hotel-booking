@@ -5,6 +5,7 @@ import org.relax.room.availability.service.dto.RoomAvailabilityData;
 import org.relax.room.availability.service.service.strategy.overlappingPolicy.OverlappingPolicy;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,6 +19,10 @@ public interface RoomAvailabilityInPort {
 
     void delete(UUID id);
 
+    RoomAvailabilityData save(RoomAvailabilityData availability);
+
     RoomAvailabilityData changeStatus(UUID roomId, RoomStatus newStatus, LocalDateTime startDate,
                                       LocalDateTime endDate, OverlappingPolicy overlappingPolicy, String reason);
+
+    List<RoomAvailabilityData> findAllUnavailablePeriodByRoomId(UUID roomId);
 }

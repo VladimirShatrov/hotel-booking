@@ -13,35 +13,44 @@ import org.relax.room.availability.service.service.strategy.overlappingPolicy.fa
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class MaintenanceRoomStrategy implements RoomAvailabilityChangeStrategy {
+public class BookRoomStrategy implements RoomAvailabilityChangeStrategy {
 
     private final RoomAvailabilityOutPort availabilityOutPort;
     private final OverlappingStrategyFactory overlappingStrategyFactory;
 
     @Transactional
     @Override
-    public RoomAvailability apply(Room room, LocalDateTime startDate, LocalDateTime endDate,
-                                  OverlappingPolicy overlappingPolicy, String reason) {
-        var overlapping = availabilityOutPort.findNestedAvailabilityIntervalsByRoom(room, startDate, endDate);
-        boolean hasBookingOrBlocked = overlapping.stream()
-                .anyMatch(a -> a.getStatus() == RoomStatus.BOOKED || a.getStatus() == RoomStatus.BLOCKED);
+    public RoomAvailability apply(Room room, LocalDateTime startDate, LocalDateTime endDate, OverlappingPolicy overlappingPolicy, String reason) {
 
-        if (hasBookingOrBlocked) {
-            throw new IllegalStateException("Room is booked or blocked, cannot maintain during this period");
+        if (overlappingPolicy != OverlappingPolicy.REJECT) {
+            throw new IllegalArgumentException("Booking allows only REJECT overlapping policy");
         }
 
-        OverlappingStrategy overlappingStrategy = overlappingStrategyFactory.getStrategy(overlappingPolicy);
-        var availability = overlappingStrategy.resolve(room, overlapping, RoomStatus.MAINTENANCE,
-                startDate, endDate);
+        List<RoomAvailability> overlaps = availabilityOutPort.findNestedAvailabilityIntervalsByRoom(room, startDate, endDate.plusHours(6));
 
-        return availabilityOutPort.save(availability);
+        OverlappingStrategy overlappingStrategy = overlappingStrategyFactory.getStrategy(overlappingPolicy);
+        var roomAvailability =  overlappingStrategy.resolve(room, overlaps, RoomStatus.BOOKED, startDate, endDate);
+
+        var maintainRoom = RoomAvailability.builder()
+                .id(UUID.randomUUID())
+                .roomId(room)
+                .status(RoomStatus.MAINTENANCE)
+                .startDate(endDate)
+                .endDate(endDate.plusHours(6))
+                .build();
+
+        availabilityOutPort.save(maintainRoom);
+
+        return availabilityOutPort.save(roomAvailability);
     }
 
     @Override
     public RoomStatus getTargetStatus() {
-        return RoomStatus.MAINTENANCE;
+        return RoomStatus.BOOKED;
     }
 }

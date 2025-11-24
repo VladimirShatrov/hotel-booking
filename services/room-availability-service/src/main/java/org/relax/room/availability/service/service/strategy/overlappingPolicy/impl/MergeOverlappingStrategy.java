@@ -6,12 +6,15 @@ import org.relax.room.availability.service.domain.RoomAvailability;
 import org.relax.room.availability.service.domain.RoomStatus;
 import org.relax.room.availability.service.service.strategy.overlappingPolicy.OverlappingStrategy;
 import org.relax.room.availability.service.service.strategy.overlappingPolicy.util.OverlapUtils;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
+@Component
 public class MergeOverlappingStrategy implements OverlappingStrategy {
 
     private final List<RoomAvailability> allExisting;
@@ -20,7 +23,10 @@ public class MergeOverlappingStrategy implements OverlappingStrategy {
         this.allExisting = allExisting;
     }
 
+    @Transactional
     @Override
+
+    //FIXME объединенные интервалы не удаляются
     public RoomAvailability resolve(Room room, List<RoomAvailability> overlaps,
                                           RoomStatus newStatus, LocalDateTime startDate,
                                           LocalDateTime endDate) {

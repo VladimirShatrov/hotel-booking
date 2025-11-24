@@ -18,7 +18,8 @@ public interface RoomAvailabilityMapper {
 
     List<RoomAvailability> fromDtoListToEntityList(List<RoomAvailabilityData> data);
     List<RoomAvailabilityData> fromEntityListToDtoList(List<RoomAvailability> data);
-    List<RoomAvailabilityPresentationV1> fromPresentationV1ListToDtoList(List<RoomAvailabilityData> data);
+    List<RoomAvailabilityPresentationV1> fromDtoListToPresentationV1List(List<RoomAvailabilityData> data);
+
 
     default UUID map(Room room) {
         return room != null ? room.getId() : null;

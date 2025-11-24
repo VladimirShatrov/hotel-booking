@@ -1,5 +1,6 @@
 package org.relax.room.availability.service.service.strategy.changeStatus.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.relax.room.availability.service.domain.Room;
@@ -22,11 +23,13 @@ public class BlockRoomStrategy implements RoomAvailabilityChangeStrategy {
     private final RoomAvailabilityOutPort availabilityOutPort;
     private final OverlappingStrategyFactory overlappingStrategyFactory;
 
+    @Transactional
     @Override
     public RoomAvailability apply(Room room, LocalDateTime startDate,
                                   LocalDateTime endDate, OverlappingPolicy overlappingPolicy,
                                   String reason) {
 
+        //FIXME метод out порта некорректный, должен находить все пересечения а не только вложенные
         var overlapping = availabilityOutPort.findNestedAvailabilityIntervalsByRoom(room, startDate, endDate);
         boolean hasBooking = overlapping.stream()
                 .anyMatch(a -> a.getStatus() == RoomStatus.BOOKED);
@@ -36,9 +39,10 @@ public class BlockRoomStrategy implements RoomAvailabilityChangeStrategy {
         }
 
         OverlappingStrategy overlappingStrategy = overlappingStrategyFactory.getStrategy(overlappingPolicy);
-
-        return overlappingStrategy.resolve(room, overlapping, RoomStatus.BLOCKED,
+        var availability = overlappingStrategy.resolve(room, overlapping, RoomStatus.BLOCKED,
                 startDate, endDate);
+
+        return availabilityOutPort.save(availability);
     }
 
     @Override

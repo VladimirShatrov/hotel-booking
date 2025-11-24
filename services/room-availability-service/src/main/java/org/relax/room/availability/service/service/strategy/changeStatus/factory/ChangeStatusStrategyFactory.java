@@ -3,6 +3,7 @@ package org.relax.room.availability.service.service.strategy.changeStatus.factor
 import org.relax.room.availability.service.domain.RoomStatus;
 import org.relax.room.availability.service.service.strategy.changeStatus.RoomAvailabilityChangeStrategy;
 import org.relax.room.availability.service.service.strategy.changeStatus.impl.BlockRoomStrategy;
+import org.relax.room.availability.service.service.strategy.changeStatus.impl.BookRoomStrategy;
 import org.relax.room.availability.service.service.strategy.changeStatus.impl.MaintenanceRoomStrategy;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +19,8 @@ public class ChangeStatusStrategyFactory {
     public ChangeStatusStrategyFactory(final List<RoomAvailabilityChangeStrategy> strategies) {
         this.strategies = Map.of(
                 RoomStatus.BLOCKED, getByType(strategies, BlockRoomStrategy.class),
-                RoomStatus.MAINTENANCE, getByType(strategies, MaintenanceRoomStrategy.class)
+                RoomStatus.MAINTENANCE, getByType(strategies, MaintenanceRoomStrategy.class),
+                RoomStatus.BOOKED, getByType(strategies, BookRoomStrategy.class)
         );
     }
 
