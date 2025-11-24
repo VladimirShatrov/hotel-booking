@@ -29,6 +29,12 @@ spring:
               filters:
                 - DedupeResponseHeader=Access-Control-Allow-Origin
                 - name: JwtUserEmailHeaderFilter
+            - id: room-availability-route
+              uri: lb://room-availability-service
+              predicates:
+                  - Path=/api/v1/availability/**
+              filters:
+                - DedupeResponseHeader=Access-Control-Allow-Origin
 
 server:
   port: 8010
