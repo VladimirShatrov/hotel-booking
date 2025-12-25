@@ -1,8 +1,8 @@
 eureka:
   instance:
     lease-renewal-interval-in-seconds: 30
-    hostname: user-service
-    appname: user-service
+    hostname: availability-service
+    appname: availability-service
   client:
     register-with-eureka: true
     fetch-registry: true
@@ -11,7 +11,7 @@ eureka:
     healthcheck:
       enabled: true
 server:
-  port: 8003
+  port: 8007
 
 spring:
   jpa:
@@ -21,12 +21,12 @@ spring:
     show-sql: true
     properties:
       hibernate:
-        default_schema: profile_schema
+        default_schema: availability_schema
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   datasource:
-    url: jdbc:postgresql://postgres-user:5432/user_db
-    username: user_service
-    password: user_pass
+    url: jdbc:postgresql://postgres-availability:5432/availability_db
+    username: availability_service
+    password: availability_pass
   kafka:
     admin:
       properties:
@@ -34,7 +34,7 @@ spring:
         min.insync.replicas: 1
     bootstrap-servers: kafka:9092
     consumer:
-      group-id: user-service-group
+      group-id: room-availability-service-group
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
@@ -44,5 +44,5 @@ spring:
               packages: org.relax.shared.dto
 flyway:
   locations: classpath:db/migration
-  schemas: profile_schema
+  schemas: availability_schema
   baseline-on-migrate: true
